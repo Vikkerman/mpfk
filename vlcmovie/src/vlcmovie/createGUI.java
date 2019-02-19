@@ -93,8 +93,8 @@ public class createGUI {
 	public static Overlay overlay;
 	public static OverlayPanel topPanel = new OverlayPanel();
 	public static OverlayPanel bottomPanel = new OverlayPanel();
-	private static TransparentToggleButton buttonPlay;
-	private static TransparentToggleButton[] buttonVolume = new TransparentToggleButton[10];
+	private static TransparentButton buttonPlay;
+	private static TransparentButton[] buttonVolume = new TransparentButton[10];
 	private static JButton buttonStop;
 	public static JProgressBar seekerProgressBar;
 	public static MouseMotionTimer mouseMotionTimer;
@@ -248,21 +248,6 @@ public class createGUI {
 	private void setMovieList() {
         listFilesFrom("D:" + FILESEPARATOR + "Downloads 2017" + FILESEPARATOR, listOfMine);
         
-/*       new Thread() {
-        	public void run(){
-        		List<String> listOfParents = new ArrayList<String>();
-        		listOfParents.add(listOfMine.get(0).getParentFile().getName().toString());
-        		for (int i = 1; i < listOfMine.size(); i++) {
-        			if (!listOfParents.contains(listOfMine.get(i).getParentFile().getName().toString())) {
-        				listOfParents.add(listOfMine.get(i).getParentFile().getName().toString());
-//        				System.out.println(listOfMine.get(i).getParentFile().getName().toString());
-//        				GoogleSearch(listOfMine.get(i).getParentFile().getName().toString());
-//        				GetPictureFromTMDBURL();
-        			}
-        		}
-        	}
-        }.start();*/
-        
         searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.Y_AXIS));
 
         File dir = new File(System.getProperty("user.dir") + FILESEPARATOR + "covers" + FILESEPARATOR);
@@ -404,7 +389,7 @@ public class createGUI {
 	public static void playFile(String file) {
 		emp.prepareMedia(file);
 		emp.play();
-		emp.setVolume(volume );
+		emp.setVolume(volume);
 	}
 	
 	private void setOverlay() {
@@ -455,7 +440,7 @@ public class createGUI {
 		    Image newimg = image.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
 		    imageIcons[i] = new ImageIcon(newimg);
 		}
-		buttonPlay = new TransparentToggleButton(imageIcons[0], imageIcons[1]);
+		buttonPlay = new TransparentButton(imageIcons[0], imageIcons[1]);
 		
 		buttonPlay.addActionListener(new ActionListener() {
 		    @Override
@@ -486,12 +471,22 @@ public class createGUI {
 		group.add(buttonStop);
 		
 		for (int i = 0; i < buttonVolume.length; i++) {
-			buttonVolume[i] = new TransparentToggleButton(imageIcons[3], imageIcons[4], 20);
+			buttonVolume[i] = new TransparentButton(imageIcons[3], imageIcons[4], 20, i+1);
 		}
 		
 		ButtonGroup groupVolume = new ButtonGroup();
 		for (int i = 0; i < buttonVolume.length; i++) {
 			groupVolume.add(buttonVolume[i]);
+			buttonVolume[i].addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					volume = ((TransparentButton) e.getSource()).getIndex() * 10;
+					emp.setVolume(volume);
+					setVolumeButtons();
+				}
+				
+			});
 		}
 		
 		topPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -548,92 +543,4 @@ public class createGUI {
     	}
 		return false;
 	}
-	
-	private static void GetPictureFromTMDBURL() {
-		new Thread() {
-			public void run(){
-				TmdbApi tmdbApi = new TmdbApi("d7004c8911b4b034490e9591a00c8b77");
-				TmdbMovies movies = tmdbApi.getMovies();
-				List<TvSeries> result = tmdbApi.getSearch().searchTv("pokemon", null, null).getResults();
-				System.out.println(" - - - > https://image.tmdb.org/t/p/w500" + result.get(0).getPosterPath());
-				System.out.println(" - - - > " + movies.getMovie(78, "en", MovieMethod.credits, MovieMethod.images, MovieMethod.similar).getPosterPath());
-			}   //https://image.tmdb.org/t/p/w500/p64TtbZGCElxQHpAMWmDHkWJlH2.jpg
-		}.start();
-	}
-	
-	// BOT-olás miatt nem jó
-	private void GoogleSearch(String folderName) {
-		String searchTerm = folderName + " imdb";
-		File fileExistingChecker = new File("\\images\\" + searchTerm + ".jpg");
-    	if (!fileExistingChecker.exists()) {
-			int num = 1;
-	
-			String searchURL = GOOGLE_SEARCH_URL + "?q=" + searchTerm + "&num=" + num;
-			// without proper User-Agent, we will get 403 error
-			Document doc;
-			try {
-				doc = Jsoup.connect(searchURL).userAgent("Mozilla/5.0").get();
-				Elements results = doc.select("h3.r > a");
-	
-				for (Element result : results) {
-					String linkHref = result.attr("href");
-					String getString = linkHref.substring(7, linkHref.indexOf("&"));
-					GetPictureFromIMDBURL(getString, fileExistingChecker.getAbsolutePath().toString());
-				}
-	
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-    	}
-	}
-	
-	private static void GetPictureFromIMDBURL(String urlString, String destinationFile) {
-		System.out.println(urlString);
-		try {
-			URL urlObject = new URL(urlString);
-			URLConnection urlConnection = urlObject.openConnection();
-	        urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-
-	        String httpAddress = toString(urlConnection.getInputStream());
-	        httpAddress = httpAddress.substring(0, httpAddress.indexOf(".jpg")+4);
-	        httpAddress = httpAddress.substring(httpAddress.lastIndexOf("href=\"")+6, httpAddress.length());
-	        System.out.println(httpAddress);
-	        getImage(httpAddress, destinationFile);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-        
-	}
-
-    private static String toString(InputStream inputStream) throws IOException {
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8")))
-        {
-            String inputLine;
-            StringBuilder stringBuilder = new StringBuilder();
-            while ((inputLine = bufferedReader.readLine()) != null)
-            {
-                stringBuilder.append(inputLine);
-            }
-
-            return stringBuilder.toString();
-        }
-    }
-    
-    public static void getImage(String imageUrl, String destinationFile) throws IOException {
-		URL url = new URL(imageUrl);
-        InputStream is = url.openStream();
-        OutputStream os = new FileOutputStream(destinationFile);
-
-        byte[] b = new byte[2048];
-        int length;
-
-        while ((length = is.read(b)) != -1) {
-            os.write(b, 0, length);
-        }
-
-        is.close();
-        os.close();
-    }
 }

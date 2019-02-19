@@ -8,9 +8,9 @@ import java.awt.Image;
 import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
-import javax.swing.JToggleButton;
+import javax.swing.JButton;
 
-public class TransparentToggleButton extends JToggleButton {
+public class TransparentButton extends JButton {
 
 	/**
 	 * 
@@ -20,16 +20,17 @@ public class TransparentToggleButton extends JToggleButton {
 	private ImageIcon icoA;
 	private ImageIcon icoP;
 	private boolean state = false;
+	private int index = 0;
 
-	public TransparentToggleButton() {
+	public TransparentButton() {
 		this(null, null);
 	}
 
-	public TransparentToggleButton(ImageIcon ico) {
+	public TransparentButton(ImageIcon ico) {
 		this(ico, null);
 	}
 
-	public TransparentToggleButton(ImageIcon icoDeselected, ImageIcon icoSelected) {
+	public TransparentButton(ImageIcon icoDeselected, ImageIcon icoSelected) {
 		setBackground(new Color(0, 0, 0, 5));
 		setContentAreaFilled(false);
 		setPreferredSize(new Dimension(50, 50));
@@ -42,10 +43,10 @@ public class TransparentToggleButton extends JToggleButton {
 
 		setUp();
 		setIcon(icoSelected);
-		setSelectedIcon(icoDeselected);
 	}
 	
-	public TransparentToggleButton(ImageIcon icoDeselected, ImageIcon icoSelected, int width) {
+	public TransparentButton(ImageIcon icoDeselected, ImageIcon icoSelected, int width, int indX) {
+		index = indX;
 		setBackground(new Color(0, 0, 0, 5));
 		setContentAreaFilled(false);
 		setPreferredSize(new Dimension(width, 50));
@@ -66,12 +67,14 @@ public class TransparentToggleButton extends JToggleButton {
 		
 		setUp();
 		setIcon(icoSelected);
-		setSelectedIcon(icoDeselected);
+	}
+	
+	public int getIndex() {
+		return index;
 	}
 
 	public void setUp() {
 		setIcon(icoA);
-		setSelectedIcon(icoP);
 	}
 
 	public void switchIco() {
@@ -84,12 +87,10 @@ public class TransparentToggleButton extends JToggleButton {
 	
 	public void setOn() {
 		setIcon(icoA);
-		setSelectedIcon(icoP);
 	}
 	
 	public void setOff() {
 		setIcon(icoP);
-		setSelectedIcon(icoA);
 	}
 
 	public boolean getState() {
