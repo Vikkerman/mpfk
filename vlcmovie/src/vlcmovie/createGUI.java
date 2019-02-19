@@ -85,6 +85,7 @@ public class createGUI {
 	private JMenuItem exitMi, settingsMi;
 	private static Point point = new Point();
 	
+	private static String fileDir = new LoadSettings().getSettings("movieDir");
 	public static List<File> listOfMine = new ArrayList<>();
 	private MediaPlayerFactory mpf;
 	public static EmbeddedMediaPlayer emp;
@@ -114,7 +115,6 @@ public class createGUI {
 	public createGUI() {
 		frame = new JFrame("vlcMoviePlayer");
 		
-		new LoadSettings();
 		createMenuBar();
 		createContentPanel();
 		setMovieList();
@@ -141,6 +141,17 @@ public class createGUI {
         frame.setVisible(true);
         
         setVLC();
+        new Thread() {
+        	public void run() {
+        		overlay.setVisible(false);
+        		try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+        		overlay.setVisible(true);
+        	}
+        }.start();
 	}
 	
 	private void createMenuBar() {
@@ -246,7 +257,7 @@ public class createGUI {
 	}
 
 	private void setMovieList() {
-        listFilesFrom("D:" + FILESEPARATOR + "Downloads 2017" + FILESEPARATOR, listOfMine);
+        listFilesFrom(fileDir, listOfMine);
         
         searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.Y_AXIS));
 

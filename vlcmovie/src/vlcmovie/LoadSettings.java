@@ -16,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 
 public class LoadSettings {
 	private final static String SETTINGSFILEPATH = "./settings/settings.txt";
+	private final String FILESEPARATOR = File.separator;
 	private static String lines[];
 	
 	LoadSettings() {
@@ -44,7 +45,7 @@ public class LoadSettings {
 				settingsArray.add(System.getProperty("user.dir") + "");
 				settingsArray.add("");
 				settingsArray.add("movieDir");
-				settingsArray.add(System.getProperty("user.dir") + "");
+				settingsArray.add("E:" + FILESEPARATOR + "Downloads 2019");
 				settingsArray.add("");
 				settingsArray.add("endOfSettings");
 				
