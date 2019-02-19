@@ -1,0 +1,7 @@
+mainDir
+C:\Users\Vikker\git\vlcmovie\vlcmovie
+
+movieDir
+C:\Users\Vikker\git\vlcmovie\vlcmovie
+
+endOfSettings

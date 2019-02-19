@@ -72,17 +72,17 @@ import info.movito.themoviedbapi.TmdbMovies.MovieMethod;
 import info.movito.themoviedbapi.model.tv.TvSeries;
 
 public class createGUI {
+	private final String FILESEPARATOR = File.separator;
 	public static JFrame frame;
 	public static JPanel moviePanel;
 	public static JPanel searchPanel;
 	public static List<MovieIcon> labels = new ArrayList<MovieIcon>();
-	public static int previousMovie = 0;
-	public static int currentMovie = 0;
+	public static int previousMovie = 0, currentMovie = 0;
 	public static JScrollPane searchScrollPane;
-	private static ColoredMenuBar menuBar;
-	private JMenu exitMenu;
+	public static ColoredMenuBar menuBar;
+	private JMenu exitMenu, settingsMenu;
 	private ColoredMenu closeMenu;
-	private JMenuItem exitMi;
+	private JMenuItem exitMi, settingsMi;
 	private static Point point = new Point();
 	
 	public static List<File> listOfMine = new ArrayList<>();
@@ -114,6 +114,7 @@ public class createGUI {
 	public createGUI() {
 		frame = new JFrame("vlcMoviePlayer");
 		
+		new LoadSettings();
 		createMenuBar();
 		createContentPanel();
 		setMovieList();
@@ -136,7 +137,7 @@ public class createGUI {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);    
         frame.pack();
         frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
+        frame.setResizable(true);
         frame.setVisible(true);
         
         setVLC();
@@ -152,6 +153,17 @@ public class createGUI {
 		menuBar = new ColoredMenuBar();
 		menuBar.setColor(hex2Rgb("#228388"));
 		
+		settingsMenu = new JMenu("Settings");
+		settingsMenu.setForeground(Color.WHITE);
+		settingsMi = new JMenuItem("Settings");
+		settingsMi.setMnemonic(KeyEvent.VK_B);
+		settingsMi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.ALT_MASK));
+		settingsMi.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	new SettingsWindow(0);
+            }
+	    });
+		
 		exitMenu = new JMenu("Exit");
 		exitMenu.setForeground(Color.WHITE);
 		exitMi = new JMenuItem("Exit");
@@ -165,7 +177,7 @@ public class createGUI {
 		exitMi.setMnemonic(KeyEvent.VK_K);
 		exitMi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ActionEvent.ALT_MASK));
 		
-		closeMenu = new ColoredMenu("Kilépés");
+		closeMenu = new ColoredMenu("Exit");
 		closeMenu.setForeground(Color.WHITE);
 		closeMenu.setColor(hex2Rgb("#c75050"));
 		closeMenu.addMouseListener(new MouseListener() {
@@ -197,11 +209,13 @@ public class createGUI {
 			public void mouseReleased(MouseEvent arg0) {}
 			
 		});
+		menuBar.add(settingsMenu);
 		menuBar.add(exitMenu);
 		menuBar.add(Box.createHorizontalGlue());
 		menuBar.add(closeMenu);
 
 		exitMenu.add(exitMi);
+		settingsMenu.add(settingsMi);
 		frame.setJMenuBar(menuBar);
 		frame.setUndecorated(true);
 	}
@@ -232,7 +246,7 @@ public class createGUI {
 	}
 
 	private void setMovieList() {
-        listFilesFrom("D:\\Downloads 2017\\", listOfMine);
+        listFilesFrom("D:" + FILESEPARATOR + "Downloads 2017" + FILESEPARATOR, listOfMine);
         
 /*       new Thread() {
         	public void run(){
@@ -251,7 +265,10 @@ public class createGUI {
         
         searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.Y_AXIS));
 
-        File dir = new File(System.getProperty("user.dir") + "\\covers\\");
+        File dir = new File(System.getProperty("user.dir") + FILESEPARATOR + "covers" + FILESEPARATOR);
+        if (!dir.exists()) {
+        	dir.mkdirs();
+        }
         File[] files = dir.listFiles((d, name) -> name.endsWith(".png"));
 
         imageArray = new ImageIcon[files.length];
@@ -350,7 +367,7 @@ public class createGUI {
 		if (RuntimeUtil.isWindows()) {
 			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(),WindowsRuntimeUtil.getVlcInstallDir());
 		} else {
-			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(),"C:\\Program Files\\VideoLAN\\VLC");
+			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(),"C:" + FILESEPARATOR + "Program Files" + FILESEPARATOR + "VideoLAN" + FILESEPARATOR + "VLC");
 		}
 		Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
 
