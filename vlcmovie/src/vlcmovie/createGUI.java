@@ -16,15 +16,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
-import java.io.BufferedReader;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,18 +53,6 @@ import uk.co.caprica.vlcj.runtime.windows.WindowsRuntimeUtil;
 
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.InputStream;
-
-import info.movito.themoviedbapi.TmdbApi;
-import info.movito.themoviedbapi.TmdbMovies;
-import info.movito.themoviedbapi.TmdbMovies.MovieMethod;
-import info.movito.themoviedbapi.model.tv.TvSeries;
 
 public class createGUI {
 	private final String FILESEPARATOR = File.separator;
@@ -105,8 +88,9 @@ public class createGUI {
 	private static String[] imageNames;
 	public static int volume = 50;
 	private final ImageIcon defaultIcon =  new ImageIcon((getClass().getResource("/images/movie.jpg")));
-	
-	public static final String GOOGLE_SEARCH_URL = "https://www.google.com/search";
+		
+	private static Object lock = new Object();
+	private static SettingsWindow sw = null;
 	
 	public static Color hex2Rgb(String colorStr) {
 		return new Color(Integer.valueOf(colorStr.substring(1, 3), 16), Integer.valueOf(colorStr.substring(3, 5), 16), Integer.valueOf(colorStr.substring(5, 7), 16));
@@ -171,7 +155,12 @@ public class createGUI {
 		settingsMi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.ALT_MASK));
 		settingsMi.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	new SettingsWindow(0);
+            	clearMovieList();
+            	reloadMoviList();
+            	setMovieList();
+            	currentMovie = 0;
+            	String fileString = listOfMine.get(currentMovie).getAbsolutePath();
+        		playFile(fileString);
             }
 	    });
 		
@@ -231,6 +220,11 @@ public class createGUI {
 		frame.setUndecorated(true);
 	}
 
+	protected void clearMovieList() {
+		listOfMine = new ArrayList<>();
+		searchPanel.removeAll();
+	}
+
 	private void createContentPanel() {
 		createMoviePanel();
 		createSearchPanel();
@@ -255,9 +249,53 @@ public class createGUI {
 		searchPanel.setBackground(Color.BLACK);
 		frame.getContentPane().add(searchScrollPane, BorderLayout.EAST);
 	}
+	
+	public void reloadMoviList() {
+    	sw = new SettingsWindow(0);
+    	Thread t = new Thread() {
+            public void run() {
+                synchronized(lock) {
+                    while (sw.isVisible()) {
+                        try {
+                            lock.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    fileDir = new LoadSettings().getSettings("movieDir");
+                    listOfMine = new ArrayList<>();
+                    listFilesFrom(fileDir, listOfMine);
+                }
+            }
+        };
+        t.start();
+        
+        sw.addWindowListener(new WindowAdapter() {
 
-	private void setMovieList() {
+            @Override
+            public void windowClosing(WindowEvent arg0) {
+                synchronized (lock) {
+                    lock.notify();
+                }
+            }
+
+        });
+
+        try {
+			t.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void setMovieList() {
+		fileDir = new LoadSettings().getSettings("movieDir");
+		listOfMine = new ArrayList<>();
         listFilesFrom(fileDir, listOfMine);
+        
+        while (listOfMine.size() < 1) {
+        	reloadMoviList();
+        }
         
         searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.Y_AXIS));
 
@@ -282,6 +320,9 @@ public class createGUI {
         for (int i = 0; i < (5 > listOfMine.size() ? listOfMine.size() : 5); i++) {
 			if (!listOfMine.get(i).getName().toString().isEmpty()) {
 				createIcons(i);
+				Dimension currMaxSize = searchPanel.getMaximumSize();
+				searchPanel.setPreferredSize(new Dimension(170, currMaxSize.height));
+				searchPanel.revalidate();
 			}
 		}
         

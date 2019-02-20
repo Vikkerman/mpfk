@@ -24,11 +24,13 @@ public class MouseMotionTimer {
 					}
 					
 					mouseLastPosition = newPosition;
-					
+
 					if (restTime >= 30) {
-						createGUI.overlay.setVisible(false);
+						if (createGUI.overlay.isVisible() && createGUI.frame.isActive())
+							createGUI.overlay.setVisible(false);
 					} else {
-						createGUI.overlay.setVisible(true);
+						if (!createGUI.overlay.isVisible())
+							createGUI.overlay.setVisible(true);
 					}
 					
 					try {

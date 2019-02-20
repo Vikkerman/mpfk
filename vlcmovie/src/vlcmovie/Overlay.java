@@ -14,7 +14,6 @@ public class Overlay extends Window {
 	public Overlay(Window owner) {
 		super(owner, WindowUtils.getAlphaCompatibleGraphicsConfiguration());
 		setBackground(new Color(0, 0, 0, 0));
-//		setOpacity(0);
 	}
 
 	@Override

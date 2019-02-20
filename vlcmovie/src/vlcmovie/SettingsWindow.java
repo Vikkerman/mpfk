@@ -56,9 +56,9 @@ public class SettingsWindow extends JFrame implements ActionListener {
     private final String CLOSEBUTTONINACTIVE = "#c75050";
     
     
-    private JButton mainButton, tempButton;
-    private JTextField mainTextField, tempTextField;
-    private JFileChooser chooser;
+    private JButton mainButton, movieButton;
+    private JTextField mainTextField, movieTextField;
+    public JFileChooser chooser = null;
 	private ColoredMenuBar menuBar;
 	private ColoredMenu closeMenu;
 	
@@ -156,18 +156,18 @@ public class SettingsWindow extends JFrame implements ActionListener {
 
         mainButton = new JButton("Change");
 
-        tempButton = new JButton("Change");
-        tempButton.addActionListener(this);
+        movieButton = new JButton("Change");
+        movieButton.addActionListener(this);
         
         mainButton.addActionListener(this);
         mainButton.setFocusable(false);
-        tempButton.setFocusable(false);
+        movieButton.setFocusable(false);
         
         mainTextField = new JTextField(mainDir.replace("//", "\\"), 40);
         mainTextField.setEditable(false);
         
-        tempTextField = new JTextField(movieDir.replace("//", "\\"), 40);
-        tempTextField.setEditable(false);
+        movieTextField = new JTextField(movieDir.replace("//", "\\"), 40);
+        movieTextField.setEditable(false);
         
 		settingsLayout.setHorizontalGroup(
 			settingsLayout.createSequentialGroup()
@@ -177,11 +177,11 @@ public class SettingsWindow extends JFrame implements ActionListener {
 				)
 				.addGroup(settingsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 					.addComponent(mainTextField)
-					.addComponent(tempTextField)
+					.addComponent(movieTextField)
 				)
 				.addGroup(settingsLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 					.addComponent(mainButton)
-					.addComponent(tempButton)
+					.addComponent(movieButton)
 				)
 		);
 		settingsLayout.setVerticalGroup(
@@ -193,8 +193,8 @@ public class SettingsWindow extends JFrame implements ActionListener {
 				)
 				.addGroup(settingsLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 					.addComponent(tempLabel)
-					.addComponent(tempTextField)
-					.addComponent(tempButton)
+					.addComponent(movieTextField)
+					.addComponent(movieButton)
 				)
 		);
 	}
@@ -202,6 +202,7 @@ public class SettingsWindow extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == mainButton) {
 			chooser = new JFileChooser(); 
+			
 			chooser.setCurrentDirectory(new java.io.File(mainDir));
 			UIManager.put("FileChooser.openDialogTitleText", "Path");
 			UIManager.put("FileChooser.openButtonText", "Save");
@@ -210,15 +211,15 @@ public class SettingsWindow extends JFrame implements ActionListener {
 			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			chooser.setAcceptAllFileFilterUsed(false);
 			
-			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
+			if (chooser.showOpenDialog(createGUI.frame) == JFileChooser.APPROVE_OPTION) { 
 				new LoadSettings();
 				mainDir = LoadSettings.changeSettings(chooser.getSelectedFile().toString(), "mainDir");
 				mainTextField.setText(mainDir.replace("//", "\\"));
 			} else {
 				System.out.println("No Selection");
 			}
-		} else if (e.getSource() == tempButton) {
-			chooser = new JFileChooser(); 
+		} else if (e.getSource() == movieButton) {
+			chooser = new JFileChooser();
 			chooser.setCurrentDirectory(new java.io.File(movieDir));
 			UIManager.put("FileChooser.openDialogTitleText", "Path");
 			UIManager.put("FileChooser.openButtonText", "Save");
@@ -227,10 +228,10 @@ public class SettingsWindow extends JFrame implements ActionListener {
 			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			chooser.setAcceptAllFileFilterUsed(false);
 			
-			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
+			if (chooser.showOpenDialog(createGUI.frame) == JFileChooser.APPROVE_OPTION) { 
 				new LoadSettings();
-				mainDir = LoadSettings.changeSettings(chooser.getSelectedFile().toString(), "tempDir");
-				mainTextField.setText(mainDir.replace("//", "\\"));
+				movieDir = LoadSettings.changeSettings(chooser.getSelectedFile().toString(), "movieDir");
+				movieTextField.setText(movieDir.replace("//", "\\"));
 			} else {
 				System.out.println("No Selection");
 			}

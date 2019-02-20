@@ -17,17 +17,17 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/vikke/git/vlcmovie/vlcmovie/Java/vlcj-3.12.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vikke/git/vlcmovie/vlcmovie/Java/slf4j-1.7.25/slf4j-api-1.7.25.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vikke/git/vlcmovie/vlcmovie/Java/platform-3.5.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vikke/git/vlcmovie/vlcmovie/Java/slf4j-1.7.25/slf4j-simple-1.7.25.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vikke/git/vlcmovie/vlcmovie/Java/jna-4.3.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vikke/git/vlcmovie/vlcmovie/Java/jsoup-1.11.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vikke/git/vlcmovie/vlcmovie/Java/themoviedbapi-1.9.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vikke/git/vlcmovie/vlcmovie/Java/jackson-annotations-2.9.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vikke/git/vlcmovie/vlcmovie/Java/jackson-core-2.9.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vikke/git/vlcmovie/vlcmovie/Java/jackson-databind-2.9.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vikke/git/vlcmovie/vlcmovie/Java/commons-lang3-3.8.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vikke/git/vlcmovie/vlcmovie/Java/commons-io-2.6/commons-io-2.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Vikker/git/vlcmovie/vlcmovie/Java/vlcj-3.12.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Vikker/git/vlcmovie/vlcmovie/Java/slf4j-1.7.25/slf4j-api-1.7.25.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Vikker/git/vlcmovie/vlcmovie/Java/platform-3.5.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Vikker/git/vlcmovie/vlcmovie/Java/slf4j-1.7.25/slf4j-simple-1.7.25.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Vikker/git/vlcmovie/vlcmovie/Java/jna-4.3.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Vikker/git/vlcmovie/vlcmovie/Java/jsoup-1.11.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Vikker/git/vlcmovie/vlcmovie/Java/themoviedbapi-1.9.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Vikker/git/vlcmovie/vlcmovie/Java/jackson-annotations-2.9.8.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Vikker/git/vlcmovie/vlcmovie/Java/jackson-core-2.9.8.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Vikker/git/vlcmovie/vlcmovie/Java/jackson-databind-2.9.8.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Vikker/git/vlcmovie/vlcmovie/Java/commons-lang3-3.8.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Vikker/git/vlcmovie/vlcmovie/Java/commons-io-2.6/commons-io-2.6.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
