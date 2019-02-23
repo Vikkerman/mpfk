@@ -1,4 +1,4 @@
-package vlcmovie;
+package vlcmovie.util;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,7 +19,7 @@ public class LoadSettings {
 	private final String FILESEPARATOR = File.separator;
 	private static String lines[];
 	
-	LoadSettings() {
+	public LoadSettings() {
 		loadSettings();
 	}
 	
@@ -57,6 +57,7 @@ public class LoadSettings {
 				        theDir.mkdir();
 				    } catch(SecurityException se){
 				        //handle it
+				    	se.printStackTrace();
 				    }        
 				}
 				
@@ -76,13 +77,12 @@ public class LoadSettings {
 	}
 	
 	public String getSettings(String line) {
-		System.out.println(lines[0]);
 		for (int i = 0; i < lines.length; i++) {
 			if (lines[i].toLowerCase().contains(line.toLowerCase())) {
-				System.out.println(lines[i+1]);
 				return lines[i+1];
 			}
 		}
+		
 		return null;
 	}
 

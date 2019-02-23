@@ -1,4 +1,4 @@
-package vlcmovie;
+package vlcmovie.ui;
 
 import java.awt.Color;
 import java.awt.Font;

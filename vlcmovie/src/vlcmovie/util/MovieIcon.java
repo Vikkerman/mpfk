@@ -1,4 +1,4 @@
-package vlcmovie;
+package vlcmovie.util;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -10,7 +10,11 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
-
+/**
+ * 
+ * @author Vikker
+ *
+ */
 public class MovieIcon extends JButton {
 
 	/**
@@ -18,7 +22,7 @@ public class MovieIcon extends JButton {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	MovieIcon(String name, int index, ImageIcon img) {
+	public MovieIcon(String name, int index, ImageIcon img) {
 		setPreferredSize(new Dimension(150,150));
 		setMinimumSize(new Dimension(150,150));
 		setMaximumSize(new Dimension(150,150));
@@ -26,8 +30,6 @@ public class MovieIcon extends JButton {
 		setBorderPainted(false);
 		setContentAreaFilled(false);
 		setFocusPainted(false);
-//		setForeground(Color.RED);
-//		setText(index + ": " + name);
 		setName("" + index);
 		setHorizontalAlignment(SwingConstants.CENTER);
         setHorizontalTextPosition(SwingConstants.CENTER);
@@ -50,18 +52,15 @@ public class MovieIcon extends JButton {
 	}
 	
 	public void focusOn() {
-		this.setBackground(new Color(255, 255, 255, 100));
+		this.setBackground(new Color(255, 255, 255));
 		this.setContentAreaFilled(true);
 		repaint();
-//		this.setBorderPainted(true);
-//		this.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createRaisedBevelBorder(), BorderFactory.createLoweredBevelBorder()));
 	}
 	
 	public void focusOff() {
-		this.setBackground(new Color(0, 0, 0, 5));
+		this.setBackground(new Color(0, 0, 0));
 		this.setContentAreaFilled(false);
 		repaint();
-//		this.setBorderPainted(false);
 	}
 
 	public void setImage(File snapshotFile) {

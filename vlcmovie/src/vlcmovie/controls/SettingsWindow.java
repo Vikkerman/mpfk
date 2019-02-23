@@ -1,4 +1,4 @@
-package vlcmovie;
+package vlcmovie.controls;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.Dialog;
 
@@ -28,6 +27,10 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+import vlcmovie.createGUI;
+import vlcmovie.ui.ColoredMenuBar;
+import vlcmovie.util.LoadSettings;
+
 public class SettingsWindow extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private static JDialog settingsDialog;
@@ -42,7 +45,8 @@ public class SettingsWindow extends JFrame implements ActionListener {
 	
 	private static JTabbedPane tabbedPane = new JTabbedPane();
 	private static JPanel settingsCard = new JPanel() {
-	private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 1L;
+		
 		public Dimension getPreferredSize() {
             Dimension size = super.getPreferredSize();
             size.width += EXTRAWINDOWWIDTH;
@@ -52,24 +56,24 @@ public class SettingsWindow extends JFrame implements ActionListener {
 
     private final String MENUBARCOLORINACTIVE = "#63B2B6";
     private final String MENUBARCOLORACTIVE = "#228388";
-    private final String CLOSEBUTTONACTIVE = "#e04343";
-    private final String CLOSEBUTTONINACTIVE = "#c75050";
-    
     
     private JButton mainButton, movieButton;
     private JTextField mainTextField, movieTextField;
     public JFileChooser chooser = null;
 	private ColoredMenuBar menuBar;
-	private ColoredMenu closeMenu;
 	
 	static Point pointS = new Point();
+	
+	public static Color hex2Rgb(String colorStr) {
+		return new Color(Integer.valueOf(colorStr.substring(1, 3), 16), Integer.valueOf(colorStr.substring(3, 5), 16), Integer.valueOf(colorStr.substring(5, 7), 16));
+	}
     
 	public SettingsWindow(int aIndex) {
 		activeTabIndex = aIndex;
 		
 		settingsDialog = new JDialog(createGUI.frame, "Settings");
 		settingsDialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-		createGUI.menuBar.setColor(createGUI.hex2Rgb(MENUBARCOLORINACTIVE));
+		createGUI.menuBar.setColor(MENUBARCOLORINACTIVE);
 		
 		try {
 	        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -83,44 +87,9 @@ public class SettingsWindow extends JFrame implements ActionListener {
         tabbedPane.setSelectedIndex(activeTabIndex);
         
         menuBar = new ColoredMenuBar();
-		menuBar.setColor(createGUI.hex2Rgb(MENUBARCOLORACTIVE));
-		
-		closeMenu = new ColoredMenu("Exit");
-		closeMenu.setForeground(Color.WHITE);
-		closeMenu.setColor(createGUI.hex2Rgb(CLOSEBUTTONINACTIVE));
-		closeMenu.addMouseListener(new MouseListener() {
-			boolean isSelected = false;
-
-			@Override
-			public void mouseClicked(MouseEvent arg0) {}
-
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-				closeMenu.setColor(createGUI.hex2Rgb(CLOSEBUTTONACTIVE));
-				isSelected = true;
-			}
-
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-				closeMenu.setColor(createGUI.hex2Rgb(CLOSEBUTTONINACTIVE));
-				isSelected = false;
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				if (isSelected) {
-					createGUI.menuBar.setColor(createGUI.hex2Rgb(MENUBARCOLORACTIVE));
-					settingsDialog.dispose();
-				}
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent arg0) {}
-			
-		});
-
+		menuBar.setColor(MENUBARCOLORACTIVE);
 		menuBar.add(Box.createHorizontalGlue());
-		menuBar.add(closeMenu);
+		menuBar.addCloseXButton(settingsDialog);
 		
 		settingsDialog.setJMenuBar(menuBar);
 		settingsDialog.getContentPane().add(tabbedPane, BorderLayout.CENTER);
@@ -151,8 +120,8 @@ public class SettingsWindow extends JFrame implements ActionListener {
         settingsLayout.setAutoCreateGaps(true);
         settingsLayout.setAutoCreateContainerGaps(true);
         
-        JLabel mainLabel = new JLabel("A program mapp√°ja: ");
-        JLabel tempLabel = new JLabel("A filmek mapp√°ja: ");
+        JLabel mainLabel = new JLabel("A program mapp·ja: ");
+        JLabel tempLabel = new JLabel("A filmek mapp·ja: ");
 
         mainButton = new JButton("Change");
 

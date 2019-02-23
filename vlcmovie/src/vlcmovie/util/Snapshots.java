@@ -1,4 +1,4 @@
-package vlcmovie;
+package vlcmovie.util;
 
 import java.io.File;
 import java.util.List;
@@ -7,23 +7,10 @@ import java.util.concurrent.CountDownLatch;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
-
+import vlcmovie.createGUI;
 /**
- * A simple application to generate a single thumbnail image from a media file.
- * <p>
- * This application shows how to implement the "vlc-thumb" sample (written in "C") that is part of
- * the vlc code-base.
- * <p>
- * The original "C" implementation is available in the vlc code-base here:
- *
- * <pre>
- *   /vlc/doc/libvlc/vlc-thumb.c
- * </pre>
- *
- * This implementation tries to stick as closely to the original "C" implementation as possible, but
- * uses a different synchronisation technique.
- * <p>
- * Since this is a test, the implementation is not very tolerant to errors.
+ * based on:
+ * https://github.com/caprica/vlcj/blob/master/src/test/java/uk/co/caprica/vlcj/test/thumbs/ThumbsTest.java
  */
 public class Snapshots {
 
@@ -42,7 +29,6 @@ public class Snapshots {
     		String fileString = listOfMine.get(i).getAbsolutePath().toString();
 	        String mrl = fileString;
 	        fileString = fileString.replaceAll("\\\\", "_").replaceAll(":", "");
-	        System.out.println(fileString);
 	        
 	        int imageWidth = Integer.parseInt("150");
 	        File snapshotFile = new File(System.getProperty("user.dir") + "\\covers\\(" + fileString + ").png");

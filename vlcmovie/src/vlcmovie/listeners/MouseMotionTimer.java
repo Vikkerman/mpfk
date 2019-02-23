@@ -1,7 +1,9 @@
-package vlcmovie;
+package vlcmovie.listeners;
 
 import java.awt.MouseInfo;
 import java.awt.Point;
+
+import vlcmovie.createGUI;
 
 public class MouseMotionTimer {
 	private static int restTime = 0;
@@ -11,10 +13,15 @@ public class MouseMotionTimer {
 		restTime = 0;
 	}
 
-	void startTimer() {
+	public void startTimer() {
 		new Thread() {
 			public void run(){
 				while (true) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 					Point newPosition = MouseInfo.getPointerInfo().getLocation();
 					
 					if (mouseLastPosition.equals(newPosition)) {
@@ -31,12 +38,6 @@ public class MouseMotionTimer {
 					} else {
 						if (!createGUI.overlay.isVisible())
 							createGUI.overlay.setVisible(true);
-					}
-					
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
 					}
 				}
 			}

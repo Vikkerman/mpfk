@@ -1,4 +1,4 @@
-package vlcmovie;
+package vlcmovie.controls;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -14,6 +14,10 @@ import java.awt.geom.RoundRectangle2D;
 import javax.swing.JComponent;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 
+import vlcmovie.createGUI;
+/**
+ * based on: https://stackoverflow.com/a/28909255
+ */
 public class TransparentSlider extends BasicProgressBarUI {
 
 	@Override

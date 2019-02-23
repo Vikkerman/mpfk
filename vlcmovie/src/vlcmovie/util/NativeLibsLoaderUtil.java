@@ -1,4 +1,4 @@
-package vlcmovie;
+package vlcmovie.util;
 
 import java.lang.reflect.Field;
 

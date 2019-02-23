@@ -1,9 +1,13 @@
-package vlcmovie;
+package vlcmovie.listeners;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-class CustomMouseListener implements MouseListener {
+import javax.swing.SwingUtilities;
+
+import vlcmovie.createGUI;
+
+public class CustomMouseListener implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e){}
 
@@ -15,7 +19,7 @@ class CustomMouseListener implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e){
-    	if (e.getSource().equals(createGUI.seekerProgressBar)) {
+    	if (e.getSource().equals(createGUI.seekerProgressBar) && SwingUtilities.isLeftMouseButton(e)) {
     		positioning(e);
     		MouseMotionTimer.resetTimer();
     	}
@@ -23,7 +27,7 @@ class CustomMouseListener implements MouseListener {
 
     @Override
     public void mouseReleased(MouseEvent e){
-    	if (e.getSource().equals(createGUI.seekerProgressBar)) {
+    	if (e.getSource().equals(createGUI.seekerProgressBar) && SwingUtilities.isLeftMouseButton(e)) {
     		positioning(e);
     	}
     }

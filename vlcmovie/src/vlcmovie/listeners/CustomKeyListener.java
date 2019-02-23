@@ -1,7 +1,9 @@
-package vlcmovie;
+package vlcmovie.listeners;
 
 import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
+
+import vlcmovie.createGUI;
 
 public class CustomKeyListener implements KeyEventDispatcher {
         @Override
@@ -25,12 +27,19 @@ public class CustomKeyListener implements KeyEventDispatcher {
 		    	MouseMotionTimer.resetTimer();
 		    }
 		    
+		    // Mute - 'M' and 'm' keys
 		    if (key == 77 || key == 109) {
 		    	if (createGUI.emp.getVolume() == 0) {
 		    		createGUI.emp.setVolume(createGUI.volume);
 		    	} else {
 		    		createGUI.emp.setVolume(0);
 		    	}
+		    	MouseMotionTimer.resetTimer();
+		    }
+		    
+		    // Clear PlayList - 'C' and 'c' keys
+		    if (key == 67 || key == 99) {
+		    	createGUI.clearPlayList();
 		    	MouseMotionTimer.resetTimer();
 		    }
 
@@ -48,8 +57,6 @@ public class CustomKeyListener implements KeyEventDispatcher {
 				createGUI.playFile(fileString);
 				
 				int yCoor = createGUI.searchPanel.getComponent(createGUI.currentMovie * 2).getY() - 30;
-//				yCoor += createGUI.searchPanel.getBounds().height/2;
-//				System.out.println("le: " + yCoor);
 				createGUI.searchScrollPane.getViewport().setViewPosition(new java.awt.Point(0, yCoor));
 				MouseMotionTimer.resetTimer();
 		    }
@@ -68,7 +75,6 @@ public class CustomKeyListener implements KeyEventDispatcher {
 				createGUI.playFile(fileString);
 
 				int yCoor = createGUI.searchPanel.getComponent(createGUI.currentMovie * 2).getY() - 30;
-//				System.out.println("fel: " + yCoor);
 				createGUI.searchScrollPane.getViewport().setViewPosition(new java.awt.Point(0, yCoor));
 				MouseMotionTimer.resetTimer();
 		    }

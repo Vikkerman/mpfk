@@ -2,6 +2,6 @@ mainDir
 C:\Users\Vikker\git\vlcmovie\vlcmovie
 
 movieDir
-C:\Users\Vikker\git\vlcmovie\vlcmovie
+E:\Downloads 2019
 
 endOfSettings

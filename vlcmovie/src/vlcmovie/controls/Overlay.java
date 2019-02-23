@@ -1,4 +1,4 @@
-package vlcmovie;
+package vlcmovie.controls;
 
 import java.awt.Color;
 import java.awt.Graphics;
