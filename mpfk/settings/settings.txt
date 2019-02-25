@@ -2,6 +2,6 @@ mainDir
 C:\Users\Vikker\git\vlcmovie\vlcmovie
 
 movieDir
-E:\Downloads 2019
+D:\Downloads 2017\Devious.Maids.S01.HUN.DVDRip.x264-HNZ
 
 endOfSettings

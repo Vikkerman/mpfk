@@ -7,7 +7,7 @@ import javax.swing.SwingUtilities;
 
 import mpfk.controls.PopUpMenu;
 
-public class CustomMouseListenerRightMouseButton  implements MouseListener {
+public class CustomMouseListenerRightMouseButton implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {

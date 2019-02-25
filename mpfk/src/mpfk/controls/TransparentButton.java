@@ -9,6 +9,7 @@ import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+
 /**
  * 
  * @author Vikker
@@ -43,7 +44,7 @@ public class TransparentButton extends JButton {
 		setOn();
 		setIcon(icoSelected);
 	}
-	
+
 	public TransparentButton(ImageIcon icoDeselected, ImageIcon icoSelected, int width, int indX) {
 		index = indX;
 		setBackground(new Color(0, 0, 0, 5));
@@ -57,25 +58,25 @@ public class TransparentButton extends JButton {
 		icoP = icoSelected;
 
 		Image image = icoA.getImage();
-	    Image newimg = image.getScaledInstance(width, 50, java.awt.Image.SCALE_SMOOTH);
-	    icoA = new ImageIcon(newimg);
-	    
-	    image = icoP.getImage();
-	    newimg = image.getScaledInstance(width, 50, java.awt.Image.SCALE_SMOOTH);
-	    icoP = new ImageIcon(newimg);
-		
-	    setOn();
+		Image newimg = image.getScaledInstance(width, 50, java.awt.Image.SCALE_SMOOTH);
+		icoA = new ImageIcon(newimg);
+
+		image = icoP.getImage();
+		newimg = image.getScaledInstance(width, 50, java.awt.Image.SCALE_SMOOTH);
+		icoP = new ImageIcon(newimg);
+
+		setOn();
 		setIcon(icoSelected);
 	}
-	
+
 	public int getIndex() {
 		return index;
 	}
-	
+
 	public void setOn() {
 		setIcon(icoA);
 	}
-	
+
 	public void setOff() {
 		setIcon(icoP);
 	}
@@ -87,7 +88,7 @@ public class TransparentButton extends JButton {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		g2d.setBackground(new Color(0, 0, 0, 5));
 		g2d.clearRect(0, 0, (int) screenSize.getWidth(), (int) screenSize.getHeight());
-		
+
 		super.paint(g2d);
 	}
 }

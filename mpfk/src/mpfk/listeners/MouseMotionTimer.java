@@ -8,14 +8,14 @@ import mpfk.createGUI;
 public class MouseMotionTimer {
 	private static int restTime = 0;
 	private static Point mouseLastPosition = MouseInfo.getPointerInfo().getLocation();
-	
+
 	public static void resetTimer() {
 		restTime = 0;
 	}
 
 	public void startTimer() {
 		new Thread() {
-			public void run(){
+			public void run() {
 				while (true) {
 					try {
 						Thread.sleep(100);
@@ -23,21 +23,21 @@ public class MouseMotionTimer {
 						e.printStackTrace();
 					}
 					Point newPosition = MouseInfo.getPointerInfo().getLocation();
-					
+
 					if (mouseLastPosition.equals(newPosition)) {
 						restTime++;
 					} else {
 						restTime = 0;
 					}
-					
+
 					mouseLastPosition = newPosition;
 
 					if (restTime >= 30) {
-						if (createGUI.overlay.isVisible() && createGUI.frame.isActive())
-							createGUI.overlay.setVisible(false);
+						if (createGUI.overlay.window().isVisible() && createGUI.frame.isActive())
+							createGUI.overlay.window().setVisible(false);
 					} else {
-						if (!createGUI.overlay.isVisible())
-							createGUI.overlay.setVisible(true);
+						if (!createGUI.overlay.window().isVisible())
+							createGUI.overlay.window().setVisible(true);
 					}
 				}
 			}

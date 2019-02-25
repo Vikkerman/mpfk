@@ -5,8 +5,6 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Image;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -26,40 +24,32 @@ import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import uk.co.caprica.vlcj.binding.LibVlc;
-import uk.co.caprica.vlcj.player.MediaPlayer;
-import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
-import uk.co.caprica.vlcj.player.MediaPlayerFactory;
+import uk.co.caprica.vlcj.binding.RuntimeUtil;
+import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.base.MediaPlayer;
+import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
-import uk.co.caprica.vlcj.player.embedded.windows.Win32FullScreenStrategy;
-import uk.co.caprica.vlcj.runtime.RuntimeUtil;
-import uk.co.caprica.vlcj.runtime.windows.WindowsRuntimeUtil;
+import uk.co.caprica.vlcj.player.embedded.fullscreen.windows.Win32FullScreenStrategy;
 
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
+import com.sun.jna.platform.win32.Advapi32Util;
+import com.sun.jna.platform.win32.WinReg;
 
 import mpfk.controls.Overlay;
-import mpfk.controls.OverlayPanel;
 import mpfk.controls.SettingsWindow;
-import mpfk.controls.TransparentButton;
-import mpfk.controls.TransparentSlider;
 import mpfk.listeners.CustomKeyListener;
-import mpfk.listeners.CustomMouseListener;
 import mpfk.listeners.CustomMouseListenerRightMouseButton;
 import mpfk.listeners.FileDropHandler;
-import mpfk.listeners.MouseMotionTimer;
 import mpfk.ui.ColoredMenuBar;
 import mpfk.ui.ScrollBarUI;
 import mpfk.util.IconCreatorThread;
@@ -68,8 +58,8 @@ import mpfk.util.MovieIcon;
 import mpfk.util.Snapshots;
 
 public class createGUI {
-	private static final  String FILESEPARATOR = File.separator;
-	private static final  String[] VLC_ARGS = {"--video-filter=deinterlace"};// --direct3d11-hw-blending, --vout=gl
+	private static final String FILESEPARATOR = File.separator;
+	private static final String[] VLC_ARGS = { "--video-filter=deinterlace" };// --direct3d11-hw-blending, --vout=gl
 	public static JFrame frame;
 	public static JPanel moviePanel, searchPanel;
 	public static JScrollPane searchScrollPane;
@@ -77,37 +67,32 @@ public class createGUI {
 	public static List<MovieIcon> labels = new ArrayList<MovieIcon>();
 	public static int previousMovie = 0, currentMovie = 0;
 	private static Point point = new Point();
-	
+
 	public static List<String> fileDir = new ArrayList<>();
 	public static List<File> listOfMine = new ArrayList<>();
-	
+
 	private MediaPlayerFactory mpf;
 	public static EmbeddedMediaPlayer emp;
 	public static Canvas movieCanvas;
-	
+
 	public static Overlay overlay;
-	private static OverlayPanel topPanel = new OverlayPanel();
-	public static OverlayPanel bottomPanel = new OverlayPanel();
-	private static TransparentButton buttonPlay;
-	private static TransparentButton[] buttonVolume = new TransparentButton[10];
-	private static JButton buttonStop;
-	public static JProgressBar seekerProgressBar;
-	public static MouseMotionTimer mouseMotionTimer;
-	
-	private static ImageIcon[] imageIcons = new ImageIcon[5];
+
 	private static ImageIcon[] imageArray;
 	private static String[] imageNames;
-	public static int volume = 50;
 	private static ImageIcon defaultIcon = null;
-		
+
 	private static Object lock = new Object();
 	private static SettingsWindow settingsWindows = null;
 	public static IconCreatorThread pictureLoaderThread;
-	
+
+	public static EmbeddedMediaPlayer getEMP() {
+		return emp;
+	}
+
 	public createGUI() {
-		defaultIcon =  new ImageIcon((getClass().getResource("/images/movie.jpg")));
+		defaultIcon = new ImageIcon((getClass().getResource("/images/movie.jpg")));
 		frame = new JFrame("vlcMoviePlayer");
-		
+
 		createMenuBar();
 		createContentPanel();
 		fileDir.clear();
@@ -115,52 +100,52 @@ public class createGUI {
 		listOfMine.clear();
 		loadMovieList();
 		setMovieList();
-		
+
 		frame.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
-		    	point.x = e.getX();
-		    	point.y = e.getY();
+				point.x = e.getX();
+				point.y = e.getY();
 			}
 		});
 		frame.addMouseMotionListener(new MouseMotionAdapter() {
-	    	public void mouseDragged(MouseEvent e) {
-	    		Point p = frame.getLocation();
-	    		frame.setLocation(p.x + e.getX() - point.x, p.y + e.getY() - point.y);
-	    	}
-	    });
+			public void mouseDragged(MouseEvent e) {
+				Point p = frame.getLocation();
+				frame.setLocation(p.x + e.getX() - point.x, p.y + e.getY() - point.y);
+			}
+		});
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-        manager.addKeyEventDispatcher(new CustomKeyListener());
+		manager.addKeyEventDispatcher(new CustomKeyListener());
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);    
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(true);
-        frame.setVisible(true);
-        
-        setVLC();
-        
-        new Thread() {
-        	public void run() {
-        		overlay.setVisible(false);
-        		try {
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.setResizable(true);
+		frame.setVisible(true);
+
+		setVLC();
+
+		new Thread() {
+			public void run() {
+				overlay.window().setVisible(false);
+				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-        		if (!overlay.isVisible()) {
-        			overlay.setVisible(true);
-        		}
-        	}
-        }.start();
+				if (!overlay.window().isVisible()) {
+					overlay.window().setVisible(true);
+				}
+			}
+		}.start();
 	}
-	
+
 	private void createMenuBar() {
 		try {
-	        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-	    }catch(Exception ex) {
-	        ex.printStackTrace();
-	    }
-		
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
 		menuBar = new ColoredMenuBar();
 		menuBar.setColor("#228388");
 		menuBar.addSettingsMenu();
@@ -171,52 +156,52 @@ public class createGUI {
 		frame.setJMenuBar(menuBar);
 		frame.setUndecorated(true);
 	}
-	
+
 	private void createContentPanel() {
 		createMoviePanel();
 		createSearchPanel();
 	}
-	
+
 	public static void loadMovieList() {
 		loadMovieList(null);
 	}
-	
+
 	public static void loadMovieList(List<File> fileList) {
 		for (String dirs : fileDir) {
 			listFilesFrom(dirs, listOfMine);
 		}
-        
-        while (listOfMine.size() < 1) {
-        	reloadMoviList();
-        }
-        if (fileList != null) {
-        	listOfMine.addAll(fileList);
-        }
+
+		while (listOfMine.size() < 1) {
+			reloadMoviList();
+		}
+		if (fileList != null) {
+			listOfMine.addAll(fileList);
+		}
 	}
-	
+
 	public static void setMovieList() {
-        labels.clear();
-        searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.Y_AXIS));
+		labels.clear();
+		searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.Y_AXIS));
 
-        File dir = new File(System.getProperty("user.dir") + FILESEPARATOR + "covers" + FILESEPARATOR);
-        if (!dir.exists()) {
-        	dir.mkdirs();
-        }
-        File[] files = dir.listFiles((d, name) -> name.endsWith(".png"));
+		File dir = new File(System.getProperty("user.dir") + FILESEPARATOR + "covers" + FILESEPARATOR);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+		File[] files = dir.listFiles((d, name) -> name.endsWith(".png"));
 
-        imageArray = new ImageIcon[files.length];
-        imageNames = new String[files.length];
+		imageArray = new ImageIcon[files.length];
+		imageNames = new String[files.length];
 
-        for (int i = 0; i < files.length; i++) {
-        	try {
+		for (int i = 0; i < files.length; i++) {
+			try {
 				imageArray[i] = new ImageIcon(ImageIO.read(files[i]));
 				imageNames[i] = files[i].getName();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-        }
+		}
 
-        for (int i = 0; i < (5 > listOfMine.size() ? listOfMine.size() : 5); i++) {
+		for (int i = 0; i < (5 > listOfMine.size() ? listOfMine.size() : 5); i++) {
 			if (!listOfMine.get(i).getName().toString().isEmpty()) {
 				createIcons(i);
 				Dimension currMaxSize = searchPanel.getMaximumSize();
@@ -224,60 +209,61 @@ public class createGUI {
 				searchPanel.revalidate();
 			}
 		}
-        
-        pictureLoaderThread = new IconCreatorThread() { // probably listOfMine reseted during initialization, so should stop this when listOfMine reseted (settings window, etc..)
-        	public void run() {
-        		for (int i = 5; i < listOfMine.size(); i++) {
-        			if (!shouldRun) {
-        				break;
-        			}
-        			if (!listOfMine.get(i).getName().toString().isEmpty()) {
-        				createIcons(i);
-        				Dimension currMaxSize = searchPanel.getMaximumSize();
-        				searchPanel.setPreferredSize(new Dimension(170, currMaxSize.height));
+
+		pictureLoaderThread = new IconCreatorThread() { // probably listOfMine reseted during initialization, so should
+														// stop this when listOfMine reseted (settings window, etc..)
+			public void run() {
+				for (int i = 5; i < listOfMine.size(); i++) {
+					if (!shouldRun) {
+						break;
+					}
+					if (!listOfMine.get(i).getName().toString().isEmpty()) {
+						createIcons(i);
+						Dimension currMaxSize = searchPanel.getMaximumSize();
+						searchPanel.setPreferredSize(new Dimension(170, currMaxSize.height));
 						searchPanel.revalidate();
-        			}
-        		}
-        		try {
-        			if (shouldRun) {
-        				new Snapshots(listOfMine);
-        			}
+					}
+				}
+				try {
+					if (shouldRun) {
+						new Snapshots(listOfMine);
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-        	}
-        };
-        
-        pictureLoaderThread.start();
-        
-        Dimension currMaxSize = searchPanel.getMaximumSize();
+			}
+		};
+
+		pictureLoaderThread.start();
+
+		Dimension currMaxSize = searchPanel.getMaximumSize();
 		searchPanel.setPreferredSize(new Dimension(170, currMaxSize.height));
 	}
-	
+
 	public static void setNewMovieList() {
 		if (pictureLoaderThread.isAlive()) {
 			pictureLoaderThread.stopThread();
 		}
 		clearMovieList();
-    	loadMovieList();
-    	setMovieList();
-    	currentMovie = 0;
-    	String fileString = listOfMine.get(currentMovie).getAbsolutePath();
+		loadMovieList();
+		setMovieList();
+		currentMovie = 0;
+		String fileString = listOfMine.get(currentMovie).getAbsolutePath();
 		playFile(fileString);
 	}
-	
+
 	public static void setNewMovieList(List<File> filesDropped) {
 		while (pictureLoaderThread.isAlive()) {
 			pictureLoaderThread.stopThread();
 		}
 		clearMovieList();
 		loadMovieList(filesDropped);
-    	setMovieList();
-    	currentMovie = 0;
-    	String fileString = listOfMine.get(currentMovie).getAbsolutePath();
+		setMovieList();
+		currentMovie = 0;
+		String fileString = listOfMine.get(currentMovie).getAbsolutePath();
 		playFile(fileString);
 	}
-	
+
 	private void createMoviePanel() {
 		moviePanel = new JPanel();
 		moviePanel.setLayout(new BorderLayout());
@@ -288,7 +274,7 @@ public class createGUI {
 		movieCanvas.addMouseListener(new CustomMouseListenerRightMouseButton());
 		frame.getContentPane().add(moviePanel, BorderLayout.CENTER);
 	}
-	
+
 	private void createSearchPanel() {
 		searchPanel = new JPanel();
 		searchScrollPane = new JScrollPane(searchPanel);
@@ -302,53 +288,53 @@ public class createGUI {
 		searchPanel.setBackground(Color.BLACK);
 		frame.getContentPane().add(searchScrollPane, BorderLayout.EAST);
 	}
-	
+
 	protected static void clearMovieList() {
 		searchPanel.removeAll();
 	}
-	
+
 	public static void reloadMoviList() {
 		String oldDir = new LoadSettings().getSettings("movieDir");
-    	settingsWindows = new SettingsWindow(0);
-    	Thread t = new Thread() {
-            public void run() {
-                synchronized(lock) {
-                    while (settingsWindows.isVisible()) {
-                        try {
-                            lock.wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (!oldDir.equals(new LoadSettings().getSettings("movieDir"))) {
-                    	listOfMine.clear();
-    					fileDir.clear();
-    	            	fileDir.add(new LoadSettings().getSettings("movieDir"));
-                        setNewMovieList();
-                    }
-                }
-            }
-        };
-        t.start();
-        
-        settingsWindows.addWindowListener(new WindowAdapter() {
+		settingsWindows = new SettingsWindow(0);
+		Thread t = new Thread() {
+			public void run() {
+				synchronized (lock) {
+					while (settingsWindows.isVisible()) {
+						try {
+							lock.wait();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+					if (!oldDir.equals(new LoadSettings().getSettings("movieDir"))) {
+						listOfMine.clear();
+						fileDir.clear();
+						fileDir.add(new LoadSettings().getSettings("movieDir"));
+						setNewMovieList();
+					}
+				}
+			}
+		};
+		t.start();
 
-            @Override
-            public void windowClosing(WindowEvent arg0) {
-                synchronized (lock) {
-                    lock.notify();
-                }
-            }
+		settingsWindows.addWindowListener(new WindowAdapter() {
 
-        });
+			@Override
+			public void windowClosing(WindowEvent arg0) {
+				synchronized (lock) {
+					lock.notify();
+				}
+			}
 
-        try {
+		});
+
+		try {
 			t.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static void createIcons(int i) {
 		String iconString = listOfMine.get(i).getName().toString();
 		labels.add(new MovieIcon(iconString, i, ifThereIsAnImage(listOfMine.get(i).getAbsolutePath().toString())));
@@ -366,7 +352,7 @@ public class createGUI {
 		JLabel label = new JLabel(iconString);
 		label.setForeground(Color.white);
 		searchPanel.add(label);
-//		searchPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+		// searchPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 	}
 
 	private static ImageIcon ifThereIsAnImage(String string) {
@@ -376,7 +362,7 @@ public class createGUI {
 				return imageArray[i];
 			}
 		}
-		
+
 		return defaultIcon;
 	}
 
@@ -385,7 +371,7 @@ public class createGUI {
 
 		// Get all files from a directory.
 		File[] fileList = directory.listFiles();
-		
+
 		if (fileList != null) {
 			for (File file : fileList) {
 				if (file.isFile() && movieFile(file)) {
@@ -402,236 +388,93 @@ public class createGUI {
 
 	private void setVLC() {
 		if (RuntimeUtil.isWindows()) {
-			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(),WindowsRuntimeUtil.getVlcInstallDir());
-		} else {
-			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(),"C:" + FILESEPARATOR + "Program Files" + FILESEPARATOR + "VideoLAN" + FILESEPARATOR + "VLC");
+			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), Advapi32Util
+					.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE, "SOFTWARE\\VideoLAN\\VLC", "InstallDir"));
+		} else if (RuntimeUtil.isMac()) {
+			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), "/Applications/VLC.app/Contents/MacOS/lib");
+		} else if (RuntimeUtil.isNix()) { // later
+			String[] DIRECTORIES = { 
+					"/usr/lib/x86_64-linux-gnu",
+					"/usr/lib64",
+					"/usr/local/lib64",
+					"/usr/lib/i386-linux-gnu",
+					"/usr/lib",
+					"/usr/local/lib" };
+			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), DIRECTORIES[0]);
 		}
-		Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
-		
+		Native.load(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
+
 		mpf = new MediaPlayerFactory(VLC_ARGS);
-		
-		emp = mpf.newEmbeddedMediaPlayer(new Win32FullScreenStrategy(frame));
-		emp.setVideoSurface(mpf.newVideoSurface(movieCanvas));
-//		emp.toggleFullScreen();
-		emp.setEnableMouseInputHandling(false);
-		emp.setEnableKeyInputHandling(false);
-	
+
+		emp = mpf.mediaPlayers().newEmbeddedMediaPlayer();
+		emp.fullScreen().strategy(new Win32FullScreenStrategy(frame));
+		emp.videoSurface().set(mpf.videoSurfaces().newVideoSurface(movieCanvas));
+		// emp.toggleFullScreen();
+		emp.input().enableMouseInputHandling(false);
+		emp.input().enableKeyInputHandling(false);
+
 		labels.get(currentMovie).focusOn();
+		overlay = new Overlay(frame);
 		String fileString = listOfMine.get(currentMovie).getAbsolutePath();
 		playFile(fileString);
-		setOverlay();
-		
-		emp.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
-            @Override
-            public void muted(MediaPlayer mediaPlayer, boolean muted) {
-            	setVolumeButtons();
-            }
 
-            @Override
-            public void volumeChanged(MediaPlayer mediaPlayer, float volume) {
-            	setVolumeButtons();
-            }
-        });
+		emp.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+			@Override
+			public void muted(MediaPlayer mediaPlayer, boolean muted) {
+				overlay.setVolumeButtons();
+			}
+
+			@Override
+			public void volumeChanged(MediaPlayer mediaPlayer, float volume) {
+				overlay.setVolumeButtons();
+			}
+		});
 	}
-	
+
 	public static void playFile(String file) {
-		emp.prepareMedia(file);
-		emp.play();
-		emp.setVolume(volume);
+		emp.media().prepare(file);
+		emp.controls().play();
+		emp.audio().setVolume(overlay.getVolume());
 		new Thread() {
 			public void run() {
-				setVolumeButtons();
+				overlay.setVolumeButtons();
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				setVolumeButtons();
+				overlay.setVolumeButtons();
 			}
 		}.start();
-	}
-	
-	private void setOverlay() {
-		overlay = new Overlay(frame);
-		overlay.setLayout(new BorderLayout());
-		
-		seekerProgressBar = new JProgressBar();
-		seekerProgressBar.setValue(1);
-		seekerProgressBar.setMaximum(1000);
-		seekerProgressBar.setOpaque(false);
-		seekerProgressBar.setBorderPainted(false);
-		seekerProgressBar.setUI(new TransparentSlider());
-		Thread progressBarThread = new Thread() {
-			public void run(){
-				while (true) {
-					float progress = (float) (emp.getPosition()*1000.0);
-					seekerProgressBar.setValue(Math.round(progress));
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		};
-		progressBarThread.start();
-		seekerProgressBar.addMouseListener(new CustomMouseListener());
-		seekerProgressBar.addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-            	if (SwingUtilities.isLeftMouseButton(e)) {
-            		int borderWidth = 7;
-            		Point pMouse = e.getPoint();
-            		int wSeeker = createGUI.seekerProgressBar.getWidth() - (2 * borderWidth);
-            		int progressSet = (int) Math.round((pMouse.x - borderWidth)/(wSeeker/1000.0));
-            		createGUI.seekerProgressBar.setValue(progressSet);
-            		createGUI.emp.setPosition((float) progressSet / 1000);
-            	}
-            }
-        });
-		
-		imageIcons[0] = new ImageIcon((getClass().getResource("/images/play.png")));
-		imageIcons[1] = new ImageIcon((getClass().getResource("/images/pause.png")));
-		imageIcons[2] = new ImageIcon((getClass().getResource("/images/stop.png")));
-		imageIcons[3] = new ImageIcon((getClass().getResource("/images/volumeon.png")));
-		imageIcons[4] = new ImageIcon((getClass().getResource("/images/volumeoff.png")));
-		
-		for (int i = 0; i < imageIcons.length; i ++) {
-		    Image image = imageIcons[i].getImage();
-		    Image newimg = image.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
-		    imageIcons[i] = new ImageIcon(newimg);
-		}
-		
-		buttonPlay = new TransparentButton(imageIcons[0], imageIcons[1]);
-		buttonPlay.addMouseListener(new CustomMouseListener());
-		buttonPlay.addActionListener(new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-		    	if (listOfMine.size() > 0) {
-			    	if (!emp.isSeekable()) {
-			    		buttonPlay.setOff();
-			    		String fileString = listOfMine.get(currentMovie).getAbsolutePath();
-			    		playFile(fileString);
-			    	} else if (!emp.isPlaying()) {
-			    		buttonPlay.setOff();
-			    		emp.play();
-			    	} else {
-			    		buttonPlay.setOn();
-			    		emp.pause();
-			    	}
-		    	}
-		    }
-		});
-
-		buttonStop = setButton(buttonStop, imageIcons[2]);
-		buttonStop.addMouseListener(new CustomMouseListener());
-		buttonStop.addActionListener(new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-		    	buttonPlay.setOn();
-		    	emp.stop();
-		    }
-		});
-		
-		ButtonGroup group = new ButtonGroup();
-		group.add(buttonPlay);
-		group.add(buttonStop);
-		
-		for (int i = 0; i < buttonVolume.length; i++) {
-			buttonVolume[i] = new TransparentButton(imageIcons[3], imageIcons[4], 20, i+1);
-		}
-		
-		ButtonGroup groupVolume = new ButtonGroup();
-		for (int i = 0; i < buttonVolume.length; i++) {
-			groupVolume.add(buttonVolume[i]);
-			buttonVolume[i].addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					volume = ((TransparentButton) e.getSource()).getIndex() * 10;
-					emp.setVolume(volume);
-					setVolumeButtons();
-				}
-				
-			});
-		}
-		
-		topPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-//		topPanel.setBackground(new Color(0, 0, 0, 5));
-		for (int i = 0; i < buttonVolume.length; i++) {
-			topPanel.add(buttonVolume[i]);
-		};
-		setVolumeButtons();
-		bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-		bottomPanel.add(buttonPlay);
-		bottomPanel.add(buttonStop);
-		bottomPanel.add(seekerProgressBar);
-        
-		mouseMotionTimer = new MouseMotionTimer();
-		mouseMotionTimer.startTimer();
-		
-		
-		overlay.add(topPanel, BorderLayout.NORTH);
-		overlay.add(bottomPanel, BorderLayout.SOUTH);
-		
-		emp.setOverlay(overlay);
-		emp.enableOverlay(true);
-	}
-
-	public static void setVolumeButtons() {
-		for (int i = 0; i < buttonVolume.length; i++) {
-			if (buttonVolume[i] == null) {
-				break;
-			}
-			if (emp.getVolume() >= (i + 1) * 10) {
-				buttonVolume[i].setOn();
-			} else {
-				buttonVolume[i].setOff();
-			}
-		}
-	}
-
-	private JButton setButton(JButton thisButton, ImageIcon img) {
-		thisButton = new JButton(img);
-		thisButton.setBackground(new Color(0, 0, 0, 0));
-		thisButton.setContentAreaFilled(false);
-		
-		thisButton.setPreferredSize(new Dimension(50, 50));
-		thisButton.setMaximumSize(new Dimension(50, 50));
-		thisButton.setMinimumSize(new Dimension(50, 50));
-		thisButton.setFocusPainted(false);
-		return thisButton;
 	}
 
 	public static boolean movieFile(File file) {
 		String name = file.getName();
-    	if (name.toLowerCase().endsWith(".avi") ||
-    		name.toLowerCase().endsWith(".mpg") ||
-    		name.toLowerCase().endsWith(".mp4") ||
-    		name.toLowerCase().endsWith(".mkv")) {
-    		return true;
-    	}
+		if (name.toLowerCase().endsWith(".avi") || name.toLowerCase().endsWith(".mpg")
+				|| name.toLowerCase().endsWith(".mp4") || name.toLowerCase().endsWith(".mkv")) {
+			return true;
+		}
 		return false;
 	}
 
 	public static void clearPlayList() {
 		pictureLoaderThread.stopThread();
-    	emp.stop();
-    	searchPanel.removeAll();
-    	listOfMine.clear();
-    	fileDir.clear();
-    	new Thread() {
-    		public void run() {
-    			try {
+		emp.controls().stop();
+		searchPanel.removeAll();
+		listOfMine.clear();
+		fileDir.clear();
+		new Thread() {
+			public void run() {
+				try {
 					Thread.sleep(300);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-    			searchPanel.removeAll();
-    		}
-    	}.start();
-    	Dimension currMaxSize = searchPanel.getMaximumSize();
-    	searchPanel.setPreferredSize(new Dimension(170, currMaxSize.height));
-    	searchPanel.revalidate();
+				searchPanel.removeAll();
+			}
+		}.start();
+		Dimension currMaxSize = searchPanel.getMaximumSize();
+		searchPanel.setPreferredSize(new Dimension(170, currMaxSize.height));
+		searchPanel.revalidate();
 	}
 }

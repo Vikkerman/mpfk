@@ -19,6 +19,7 @@ import mpfk.createGUI;
 
 /**
  * Coloring JMenuBar
+ * 
  * @author Vikker
  *
  */
@@ -30,42 +31,43 @@ public class ColoredMenuBar extends JMenuBar {
 	private JMenu exitMenu = null;
 	private JMenuItem exitMi = null;
 	private ColoredMenu closeXButton;
-//	private final String MENUBARCOLORINACTIVE = "#63B2B6";
-    private final String MENUBARCOLORACTIVE = "#228388";
+	// private final String MENUBARCOLORINACTIVE = "#63B2B6";
+	private final String MENUBARCOLORACTIVE = "#228388";
 	private final String CLOSEBUTTONACTIVE = "#e04343";
-    private final String CLOSEBUTTONINACTIVE = "#c75050";
+	private final String CLOSEBUTTONINACTIVE = "#c75050";
 
-    public void setColor(String color) {
-        bgColor = hex2Rgb(color);
-    }
+	public void setColor(String color) {
+		bgColor = hex2Rgb(color);
+	}
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(bgColor);
-        g2d.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		Graphics2D g2d = (Graphics2D) g;
+		g2d.setColor(bgColor);
+		g2d.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
 
-    }
-    
-    public static Color hex2Rgb(String colorStr) {
-		return new Color(Integer.valueOf(colorStr.substring(1, 3), 16), Integer.valueOf(colorStr.substring(3, 5), 16), Integer.valueOf(colorStr.substring(5, 7), 16));
+	}
+
+	public static Color hex2Rgb(String colorStr) {
+		return new Color(Integer.valueOf(colorStr.substring(1, 3), 16), Integer.valueOf(colorStr.substring(3, 5), 16),
+				Integer.valueOf(colorStr.substring(5, 7), 16));
 	}
 
 	public void addSettingsMenu() {
-    	settingsMenu = new JMenu("Settings");
+		settingsMenu = new JMenu("Settings");
 		settingsMenu.setForeground(Color.WHITE);
 		settingsMi = new JMenuItem("Settings");
 		settingsMi.setMnemonic(KeyEvent.VK_S);
 		settingsMi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
 		settingsMi.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            	createGUI.reloadMoviList();
-            }
-	    });
+			public void actionPerformed(ActionEvent e) {
+				createGUI.reloadMoviList();
+			}
+		});
 		settingsMenu.add(settingsMi);
 		add(settingsMenu);
-    }
+	}
 
 	public void addExitMenu() {
 		exitMenu = new JMenu("Exit");
@@ -74,14 +76,14 @@ public class ColoredMenuBar extends JMenuBar {
 		exitMi.setMnemonic(KeyEvent.VK_E);
 		exitMi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.ALT_MASK));
 		exitMi.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            	System.exit(0);
-            }
-	    });
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
 		exitMenu.add(exitMi);
 		add(exitMenu);
 	}
-	
+
 	public void addCloseXButton() {
 		addCloseXButton(null);
 	}
@@ -94,7 +96,8 @@ public class ColoredMenuBar extends JMenuBar {
 			boolean isSelected = false;
 
 			@Override
-			public void mouseClicked(MouseEvent e) {}
+			public void mouseClicked(MouseEvent e) {
+			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -121,8 +124,9 @@ public class ColoredMenuBar extends JMenuBar {
 			}
 
 			@Override
-			public void mouseReleased(MouseEvent e) {}
-			
+			public void mouseReleased(MouseEvent e) {
+			}
+
 		});
 		add(closeXButton);
 	}

@@ -23,7 +23,7 @@ public class PopUpMenu extends JPopupMenu {
 				createGUI.reloadMoviList();
 			}
 		});
-		
+
 		clearItem = new JMenuItem("Clear playlist");
 		clearItem.addActionListener(new ActionListener() {
 			@Override
