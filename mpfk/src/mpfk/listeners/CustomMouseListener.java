@@ -45,7 +45,7 @@ public class CustomMouseListener implements MouseListener {
 		int wSeeker = createGUI.overlay.seekerBar.getWidth() - (2 * borderWidth);
 		int progressSet = (int) Math.round((e.getPoint().x - borderWidth) / (wSeeker / 1000.0));
 		createGUI.overlay.seekerBar.setValue(progressSet);
-		createGUI.emp.controls().setPosition((float) progressSet / 1000);
+		createGUI.emp.setPosition((float) progressSet / 1000);
 		createGUI.overlay.seekerBar.repaint();
 		createGUI.moviePanel.repaint();
 		createGUI.overlay.repaint();

@@ -21,7 +21,7 @@ public class CustomKeyListener implements KeyEventDispatcher {
 			if (createGUI.overlay.getVolume() >= 10) {
 				createGUI.overlay.setVolume(-10);
 			}
-			createGUI.emp.audio().setVolume(createGUI.overlay.getVolume());
+			createGUI.emp.setVolume(createGUI.overlay.getVolume());
 			MouseMotionTimer.resetTimer();
 		}
 
@@ -29,16 +29,16 @@ public class CustomKeyListener implements KeyEventDispatcher {
 			if (createGUI.overlay.getVolume() <= 90) {
 				createGUI.overlay.setVolume(10);
 			}
-			createGUI.emp.audio().setVolume(createGUI.overlay.getVolume());
+			createGUI.emp.setVolume(createGUI.overlay.getVolume());
 			MouseMotionTimer.resetTimer();
 		}
 
 		// Mute - 'M' and 'm' keys
 		if (key == 77 || key == 109) {
-			if (createGUI.emp.audio().volume() == 0) {
-				createGUI.emp.audio().setVolume(createGUI.overlay.getVolume());
+			if (createGUI.emp.getVolume() == 0) {
+				createGUI.emp.setVolume(createGUI.overlay.getVolume());
 			} else {
-				createGUI.emp.audio().setVolume(0);
+				createGUI.emp.setVolume(0);
 			}
 			MouseMotionTimer.resetTimer();
 		}
@@ -59,8 +59,7 @@ public class CustomKeyListener implements KeyEventDispatcher {
 			createGUI.labels.get(createGUI.currentMovie).focusOn();
 			createGUI.previousMovie = createGUI.currentMovie;
 
-			String fileString = createGUI.listOfMine.get(createGUI.currentMovie).getAbsolutePath();
-			createGUI.playFile(fileString);
+			createGUI.playFile();
 
 			int yCoor = createGUI.searchPanel.getComponent(createGUI.currentMovie * 2).getY() - 30;
 			createGUI.searchScrollPane.getViewport().setViewPosition(new java.awt.Point(0, yCoor));
@@ -77,8 +76,7 @@ public class CustomKeyListener implements KeyEventDispatcher {
 			createGUI.labels.get(createGUI.currentMovie).focusOn();
 			createGUI.previousMovie = createGUI.currentMovie;
 
-			String fileString = createGUI.listOfMine.get(createGUI.currentMovie).getAbsolutePath();
-			createGUI.playFile(fileString);
+			createGUI.playFile();
 
 			int yCoor = createGUI.searchPanel.getComponent(createGUI.currentMovie * 2).getY() - 30;
 			createGUI.searchScrollPane.getViewport().setViewPosition(new java.awt.Point(0, yCoor));

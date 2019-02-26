@@ -12,6 +12,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -20,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -32,19 +33,6 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 
-import uk.co.caprica.vlcj.binding.LibVlc;
-import uk.co.caprica.vlcj.binding.RuntimeUtil;
-import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
-import uk.co.caprica.vlcj.player.base.MediaPlayer;
-import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
-import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
-import uk.co.caprica.vlcj.player.embedded.fullscreen.windows.Win32FullScreenStrategy;
-
-import com.sun.jna.Native;
-import com.sun.jna.NativeLibrary;
-import com.sun.jna.platform.win32.Advapi32Util;
-import com.sun.jna.platform.win32.WinReg;
-
 import mpfk.controls.Overlay;
 import mpfk.controls.SettingsWindow;
 import mpfk.listeners.CustomKeyListener;
@@ -55,7 +43,10 @@ import mpfk.ui.ScrollBarUI;
 import mpfk.util.IconCreatorThread;
 import mpfk.util.LoadSettings;
 import mpfk.util.MovieIcon;
-import mpfk.util.Snapshots;
+import mpfk.util.Snapshots3;
+//import mpfk.util.Snapshots4;
+import mpfk.util.VlcjLoader3;
+//import mpfk.util.VlcjLoader4;
 /**
  * Media Player for kids main class.
  * 
@@ -65,7 +56,6 @@ import mpfk.util.Snapshots;
 public class createGUI {
 	private static final String FILESEPARATOR = File.separator;
 	private final static String MENUBARCOLORACTIVE = "#228388";
-	private static final String[] VLC_ARGS = { "--video-filter=deinterlace" };// --direct3d11-hw-blending, --vout=gl
 	public static JFrame frame;
 	public static JPanel moviePanel, searchPanel;
 	public static JScrollPane searchScrollPane;
@@ -77,8 +67,8 @@ public class createGUI {
 	public static List<String> fileDir = new ArrayList<>();
 	public static List<File> listOfMine = new ArrayList<>();
 
-	private MediaPlayerFactory mpf;
-	public static EmbeddedMediaPlayer emp;
+	public static VlcjLoader3 emp;
+//	public static VlcjLoader4 emp;
 	public static Canvas movieCanvas;
 
 	public static Overlay overlay;
@@ -231,7 +221,8 @@ public class createGUI {
 				}
 				try {
 					if (shouldRun) {
-						new Snapshots(listOfMine);
+						new Snapshots3(listOfMine);
+//						new Snapshots4(listOfMine);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -257,8 +248,7 @@ public class createGUI {
 		loadMovieList(filesDropped);
 		setMovieList();
 		currentMovie = 0;
-		String fileString = listOfMine.get(currentMovie).getAbsolutePath();
-		playFile(fileString);
+		playFile();
 	}
 
 	private void createMoviePanel() {
@@ -266,6 +256,21 @@ public class createGUI {
 		moviePanel.setLayout(new BorderLayout());
 		movieCanvas = new Canvas();
 		movieCanvas.setBackground(Color.BLACK);
+		movieCanvas.addMouseWheelListener(new MouseWheelListener() {
+
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				if (e.getWheelRotation() == 1) {
+					emp.decreaseVolume();
+					overlay.resetTimer();
+				}
+				if (e.getWheelRotation() == -1) {
+					emp.increaseVolume();
+					overlay.resetTimer();
+				}
+			}
+			
+		});
 		moviePanel.add(movieCanvas);
 		moviePanel.setTransferHandler(new FileDropHandler());
 		movieCanvas.addMouseListener(new CustomMouseListenerRightMouseButton());
@@ -338,11 +343,10 @@ public class createGUI {
 		labels.get(i).addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				currentMovie = ((MovieIcon) e.getSource()).getIndex();
-				String fileString = listOfMine.get(currentMovie).getAbsolutePath();
 				labels.get(previousMovie).focusOff();
 				labels.get(currentMovie).focusOn();
 				previousMovie = currentMovie;
-				playFile(fileString);
+				playFile();
 			}
 		});
 		searchPanel.add(labels.get(i));
@@ -384,54 +388,21 @@ public class createGUI {
 	}
 
 	private void setVLC() {
-		if (RuntimeUtil.isWindows()) {
-			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), Advapi32Util
-					.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE, "SOFTWARE\\VideoLAN\\VLC", "InstallDir"));
-		} else if (RuntimeUtil.isMac()) {
-			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), "/Applications/VLC.app/Contents/MacOS/lib");
-		} else if (RuntimeUtil.isNix()) { // later
-			String[] DIRECTORIES = { 
-					"/usr/lib/x86_64-linux-gnu",
-					"/usr/lib64",
-					"/usr/local/lib64",
-					"/usr/lib/i386-linux-gnu",
-					"/usr/lib",
-					"/usr/local/lib" };
-			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), DIRECTORIES[0]);
-		}
-		Native.load(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
-
-		mpf = new MediaPlayerFactory(VLC_ARGS);
-
-		emp = mpf.mediaPlayers().newEmbeddedMediaPlayer();
-		emp.fullScreen().strategy(new Win32FullScreenStrategy(frame));
-		emp.videoSurface().set(mpf.videoSurfaces().newVideoSurface(movieCanvas));
-		// emp.toggleFullScreen();
-		emp.input().enableMouseInputHandling(false);
-		emp.input().enableKeyInputHandling(false);
+		emp = new VlcjLoader3(frame, movieCanvas);
+//		emp = new VlcjLoader4(frame, movieCanvas);
+		emp.setEventListener();
 
 		labels.get(currentMovie).focusOn();
 		overlay = new Overlay(frame);
-		String fileString = listOfMine.get(currentMovie).getAbsolutePath();
-		playFile(fileString);
-
-		emp.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
-			@Override
-			public void muted(MediaPlayer mediaPlayer, boolean muted) {
-				overlay.setVolumeButtons();
-			}
-
-			@Override
-			public void volumeChanged(MediaPlayer mediaPlayer, float volume) {
-				overlay.setVolumeButtons();
-			}
-		});
+		playFile();
 	}
 
-	public static void playFile(String file) {
-		emp.media().prepare(file);
-		emp.controls().play();
-		emp.audio().setVolume(overlay.getVolume());
+	public static void playFile() {
+		String file = listOfMine.get(currentMovie).getAbsolutePath();
+		
+		emp.prepare(file);
+		emp.play();
+		emp.setVolume(overlay.getVolume());
 		new Thread() {
 			public void run() {
 				overlay.setVolumeButtons();
@@ -456,7 +427,7 @@ public class createGUI {
 
 	public static void clearPlayList() {
 		pictureLoaderThread.stopThread();
-		emp.controls().stop();
+		emp.stop();
 		searchPanel.removeAll();
 		listOfMine.clear();
 		fileDir.clear();

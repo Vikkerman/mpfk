@@ -29,7 +29,7 @@ public class Overlay {
 	private static OverlayPanel bottomPanel = new OverlayPanel();
 	public JProgressBar seekerBar;
 
-	private MouseMotionTimer mouseMotionTimer;
+	public MouseMotionTimer mouseMotionTimer;
 	private LoadAndScaleImages imageIcons = new LoadAndScaleImages();
 	private TransparentButton buttonPlay;
 	private JButton buttonStop;
@@ -55,6 +55,10 @@ public class Overlay {
 
 	public void repaintBottomPanel() {
 		bottomPanel.repaint();
+	}
+	
+	public void resetTimer() {
+		MouseMotionTimer.resetTimer();
 	}
 
 	public Overlay(JFrame parent) {
@@ -99,9 +103,7 @@ public class Overlay {
 		overlayWindow.add(topPanel, BorderLayout.NORTH);
 		overlayWindow.add(bottomPanel, BorderLayout.SOUTH);
 
-		createGUI.emp.overlay().set(overlayWindow);
-		createGUI.emp.overlay().enable(true);
-
+		createGUI.emp.setOverlay(overlayWindow);
 	}
 
 	private TransparentButton[] volumeButtons() {
@@ -113,7 +115,7 @@ public class Overlay {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					volume = ((TransparentButton) e.getSource()).getIndex() * 10;
-					createGUI.emp.audio().setVolume(volume);
+					createGUI.emp.setVolume(volume);
 					setVolumeButtons();
 				}
 
@@ -128,7 +130,7 @@ public class Overlay {
 			if (buttonVolume[i] == null) {
 				break;
 			}
-			if (createGUI.emp.audio().volume() >= (i + 1) * 10) {
+			if (createGUI.emp.getVolume() >= (i + 1) * 10) {
 				buttonVolume[i].setOn();
 			} else {
 				buttonVolume[i].setOff();
@@ -142,11 +144,11 @@ public class Overlay {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (createGUI.emp.audio().volume() == 0) {
-					createGUI.emp.audio().setVolume(volume);
+				if (createGUI.emp.getVolume() == 0) {
+					createGUI.emp.setVolume(volume);
 					initMute.setOn();
 				} else {
-					createGUI.emp.audio().setVolume(0);
+					createGUI.emp.setVolume(0);
 					initMute.setOff();
 				}
 				setVolumeButtons();
@@ -164,16 +166,15 @@ public class Overlay {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (createGUI.listOfMine.size() > 0) {
-					if (!createGUI.emp.status().isSeekable()) {
+					if (!createGUI.emp.isSeekable()) {
 						initPlay.setOff();
-						String fileString = createGUI.listOfMine.get(createGUI.currentMovie).getAbsolutePath();
-						createGUI.playFile(fileString);
-					} else if (!createGUI.emp.status().isPlaying()) {
+						createGUI.playFile();
+					} else if (!createGUI.emp.isPlaying()) {
 						initPlay.setOff();
-						createGUI.emp.controls().play();
+						createGUI.emp.play();
 					} else {
 						initPlay.setOn();
-						createGUI.emp.controls().pause();
+						createGUI.emp.pause();
 					}
 				}
 			}
@@ -196,7 +197,7 @@ public class Overlay {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				buttonPlay.setOn();
-				createGUI.emp.controls().stop();
+				createGUI.emp.stop();
 			}
 		});
 		return initStop;
@@ -258,7 +259,7 @@ public class Overlay {
 						int wSeeker = seeker.getWidth() - INNERBORDER;
 						int progressSet = (int) Math.round((pMouse.x - OUTERBORDER) / (wSeeker / SCALE));
 						seeker.setValue(progressSet);
-						createGUI.emp.controls().setPosition((float) progressSet / SCALE);
+						createGUI.emp.setPosition((float) progressSet / SCALE);
 					}
 				}
 			});
@@ -266,7 +267,7 @@ public class Overlay {
 			new Thread() {
 				public void run() {
 					while (true) {
-						float progress = (float) (createGUI.emp.status().position() * SCALE);
+						float progress = (float) (createGUI.emp.getPosition() * SCALE);
 						seeker.setValue(Math.round(progress));
 						try {
 							Thread.sleep(1000);
