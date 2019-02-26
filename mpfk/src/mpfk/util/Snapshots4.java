@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import mpfk.createGUI;
-//import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
-//import uk.co.caprica.vlcj.player.base.MediaPlayer;
-//import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
+import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.player.base.MediaPlayer;
+import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
 /**
  * Snapshot taker class
  * 
@@ -36,30 +36,30 @@ public class Snapshots4 {
 			if (!snapshotFile.exists()) {
 				snapshotFile.getParentFile().mkdirs();
 
-//				MediaPlayerFactory factory = new MediaPlayerFactory(VLC_ARGS);
-//				MediaPlayer mediaPlayer = factory.mediaPlayers().newEmbeddedMediaPlayer();
+				MediaPlayerFactory factory = new MediaPlayerFactory(VLC_ARGS);
+				MediaPlayer mediaPlayer = factory.mediaPlayers().newEmbeddedMediaPlayer();
 
 				final CountDownLatch inPositionLatch = new CountDownLatch(1);
 				final CountDownLatch snapshotTakenLatch = new CountDownLatch(1);
 
-//				mediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+				mediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
 
-//					@Override
-//					public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {
-//						if (newPosition >= VLC_THUMBNAIL_POSITION * 0.9f) { /* 90% margin */
-//							inPositionLatch.countDown();
-//						}
-//					}
+					@Override
+					public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {
+						if (newPosition >= VLC_THUMBNAIL_POSITION * 0.9f) { /* 90% margin */
+							inPositionLatch.countDown();
+						}
+					}
 
-//					@Override
-//					public void snapshotTaken(MediaPlayer mediaPlayer, String filename) {
-//						System.out.println("snapshotTaken(filename=" + filename + ")");
-//						snapshotTakenLatch.countDown();
-//					}
+					@Override
+					public void snapshotTaken(MediaPlayer mediaPlayer, String filename) {
+						System.out.println("snapshotTaken(filename=" + filename + ")");
+						snapshotTakenLatch.countDown();
+					}
 
-//				});
+				});
 
-/*				if (mediaPlayer.media().start(mrl)) {
+				if (mediaPlayer.media().start(mrl)) {
 					mediaPlayer.controls().setPosition(VLC_THUMBNAIL_POSITION);
 					inPositionLatch.await(); // Might wait forever if error
 
@@ -73,7 +73,7 @@ public class Snapshots4 {
 				}
 
 				mediaPlayer.release();
-				factory.release();*/
+				factory.release();
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 package mpfk.util;
-/*
+
 import java.awt.Canvas;
 import javax.swing.JFrame;
 
@@ -128,4 +128,4 @@ public class VlcjLoader4 {
 		}
 	}
 	
-}*/
+}
