@@ -1,7 +1,6 @@
 package mpfk.controls;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -30,19 +29,16 @@ import javax.swing.border.TitledBorder;
 import mpfk.createGUI;
 import mpfk.ui.ColoredMenuBar;
 import mpfk.util.LoadSettings;
-
+/**
+ * Tabbed JDialog for settings and so maybe later..
+ * 
+ * @author Vikker
+ *
+ */
 public class SettingsWindow extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
+	
 	private static JDialog settingsDialog;
-
-	private static int activeTabIndex = 0;
-
-	private final static String PATHSETTINGSPANEL = "Structure";
-	private final static int EXTRAWINDOWWIDTH = 100;
-
-	public static String mainDir = new LoadSettings().getSettings("mainDir");
-	public static String movieDir = new LoadSettings().getSettings("movieDir");
-
 	private static JTabbedPane tabbedPane = new JTabbedPane();
 	private static JPanel settingsCard = new JPanel() {
 		private static final long serialVersionUID = 1L;
@@ -53,25 +49,25 @@ public class SettingsWindow extends JFrame implements ActionListener {
 			return size;
 		}
 	};
+	private static int activeTabIndex = 0;
+	
+	private final static String MENUBARCOLORINACTIVE = "#63B2B6";
+	private final static String MENUBARCOLORACTIVE = "#228388";
+	private final static String PATHSETTINGSPANEL = "Structure";
+	private final static int EXTRAWINDOWWIDTH = 100;
 
-	private final String MENUBARCOLORINACTIVE = "#63B2B6";
-	private final String MENUBARCOLORACTIVE = "#228388";
+	private static String mainDir = new LoadSettings().getSettings("mainDir");
+	private static String movieDir = new LoadSettings().getSettings("movieDir");
 
 	private JButton mainButton, movieButton;
 	private JTextField mainTextField, movieTextField;
-	public JFileChooser chooser = null;
+	private JFileChooser chooser = null;
 	private ColoredMenuBar menuBar;
-
-	static Point pointS = new Point();
-
-	public static Color hex2Rgb(String colorStr) {
-		return new Color(Integer.valueOf(colorStr.substring(1, 3), 16), Integer.valueOf(colorStr.substring(3, 5), 16),
-				Integer.valueOf(colorStr.substring(5, 7), 16));
-	}
+	private static Point pointS = new Point();
 
 	public SettingsWindow(int aIndex) {
 		activeTabIndex = aIndex;
-
+		setUI();
 		settingsDialog = new JDialog(createGUI.frame, "Settings");
 		settingsDialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 		createGUI.menuBar.setColor(MENUBARCOLORINACTIVE);
@@ -121,8 +117,8 @@ public class SettingsWindow extends JFrame implements ActionListener {
 		settingsLayout.setAutoCreateGaps(true);
 		settingsLayout.setAutoCreateContainerGaps(true);
 
-		JLabel mainLabel = new JLabel("A program mapp�ja: ");
-		JLabel tempLabel = new JLabel("A filmek mapp�ja: ");
+		JLabel mainLabel = new JLabel("MPFK folder: ");
+		JLabel tempLabel = new JLabel("Movie folder: ");
 
 		mainButton = new JButton("Change");
 
@@ -152,42 +148,35 @@ public class SettingsWindow extends JFrame implements ActionListener {
 				.addGroup(settingsLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(tempLabel)
 						.addComponent(movieTextField).addComponent(movieButton)));
 	}
+	
+	private void setUI() {
+		UIManager.put("FileChooser.openDialogTitleText", "Path");
+		UIManager.put("FileChooser.openButtonText", "Save");
+		UIManager.put("FileChooser.cancelButtonText", "Cancel");
+	}
+	
+	private boolean setUpChooser(String dirStr) {
+		chooser = new JFileChooser();
+		chooser.setCurrentDirectory(new java.io.File(dirStr));
+		SwingUtilities.updateComponentTreeUI(chooser);
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setAcceptAllFileFilterUsed(false);
+		
+		return chooser.showOpenDialog(createGUI.frame) == JFileChooser.APPROVE_OPTION;
+	}
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == mainButton) {
-			chooser = new JFileChooser();
-
-			chooser.setCurrentDirectory(new java.io.File(mainDir));
-			UIManager.put("FileChooser.openDialogTitleText", "Path");
-			UIManager.put("FileChooser.openButtonText", "Save");
-			UIManager.put("FileChooser.cancelButtonText", "Cancel");
-			SwingUtilities.updateComponentTreeUI(chooser);
-			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			chooser.setAcceptAllFileFilterUsed(false);
-
-			if (chooser.showOpenDialog(createGUI.frame) == JFileChooser.APPROVE_OPTION) {
+			if (setUpChooser(mainDir)) {
 				new LoadSettings();
 				mainDir = LoadSettings.changeSettings(chooser.getSelectedFile().toString(), "mainDir");
 				mainTextField.setText(mainDir.replace("//", "\\"));
-			} else {
-				System.out.println("No Selection");
 			}
 		} else if (e.getSource() == movieButton) {
-			chooser = new JFileChooser();
-			chooser.setCurrentDirectory(new java.io.File(movieDir));
-			UIManager.put("FileChooser.openDialogTitleText", "Path");
-			UIManager.put("FileChooser.openButtonText", "Save");
-			UIManager.put("FileChooser.cancelButtonText", "Cancel");
-			SwingUtilities.updateComponentTreeUI(chooser);
-			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			chooser.setAcceptAllFileFilterUsed(false);
-
-			if (chooser.showOpenDialog(createGUI.frame) == JFileChooser.APPROVE_OPTION) {
+			if (setUpChooser(movieDir)) {
 				new LoadSettings();
 				movieDir = LoadSettings.changeSettings(chooser.getSelectedFile().toString(), "movieDir");
 				movieTextField.setText(movieDir.replace("//", "\\"));
-			} else {
-				System.out.println("No Selection");
 			}
 		}
 		settingsDialog.pack();

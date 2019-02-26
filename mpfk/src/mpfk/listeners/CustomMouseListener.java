@@ -6,7 +6,12 @@ import java.awt.event.MouseListener;
 import javax.swing.SwingUtilities;
 
 import mpfk.createGUI;
-
+/**
+ * Mouse listener for TransparentSlider to set the seeker and the movie.
+ * 
+ * @author Vikker
+ *
+ */
 public class CustomMouseListener implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {

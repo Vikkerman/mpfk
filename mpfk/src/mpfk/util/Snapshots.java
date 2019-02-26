@@ -8,8 +8,9 @@ import mpfk.createGUI;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
-
 /**
+ * Snapshot taker class
+ * 
  * based on:
  * https://github.com/caprica/vlcj/blob/master/src/test/java/uk/co/caprica/vlcj/test/thumbs/ThumbsTest.java
  */

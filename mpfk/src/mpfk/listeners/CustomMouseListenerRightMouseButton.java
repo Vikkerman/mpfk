@@ -6,7 +6,12 @@ import java.awt.event.MouseListener;
 import javax.swing.SwingUtilities;
 
 import mpfk.controls.PopUpMenu;
-
+/**
+ * MouseListener for Right mouse button. (PupupMnu)
+ * 
+ * @author Vikker
+ *
+ */
 public class CustomMouseListenerRightMouseButton implements MouseListener {
 
 	@Override

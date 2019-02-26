@@ -4,7 +4,15 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 
 import mpfk.createGUI;
-
+/**
+ * This class for handling mouse actions. If mouse moves, than reset timer.
+ * After 3 seconds without interactions overlay should set visible(false).
+ * If mouse moves or clicking over frame, overlay should set visible(true).
+ * Or if it's still visible, then reset timer.
+ * 
+ * @author Vikker
+ *
+ */
 public class MouseMotionTimer {
 	private static int restTime = 0;
 	private static Point mouseLastPosition = MouseInfo.getPointerInfo().getLocation();

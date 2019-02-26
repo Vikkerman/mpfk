@@ -4,7 +4,16 @@ import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 
+/**
+ * Transparent JPanel
+ * 
+ * @author Vikker
+ *
+ */
 public class OverlayPanel extends JPanel {
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 
 	public OverlayPanel() {

@@ -4,7 +4,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Window;
 import com.sun.jna.platform.WindowUtils;
-
+/**
+ * Transparent Window for overlaying video canvas.
+ * 
+ * @author Vikker
+ *
+ */
 public class OverlayWindow extends Window {
 	/**
 	 * 

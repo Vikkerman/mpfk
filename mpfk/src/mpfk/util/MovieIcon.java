@@ -10,8 +10,8 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
-
 /**
+ * JButton extension for MovieIcons
  * 
  * @author Vikker
  *
@@ -22,6 +22,8 @@ public class MovieIcon extends JButton {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	private int thisIndex;
 
 	public MovieIcon(String name, int index, ImageIcon img) {
 		setPreferredSize(new Dimension(150, 150));
@@ -31,6 +33,7 @@ public class MovieIcon extends JButton {
 		setBorderPainted(false);
 		setContentAreaFilled(false);
 		setFocusPainted(false);
+		thisIndex = index;
 		setName("" + index);
 		setHorizontalAlignment(SwingConstants.CENTER);
 		setHorizontalTextPosition(SwingConstants.CENTER);
@@ -50,6 +53,10 @@ public class MovieIcon extends JButton {
 		}
 
 		setIcon(img);
+	}
+	
+	public int getIndex() {
+		return thisIndex;
 	}
 
 	public void focusOn() {

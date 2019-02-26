@@ -4,7 +4,12 @@ import java.awt.KeyEventDispatcher;
 import java.awt.event.KeyEvent;
 
 import mpfk.createGUI;
-
+/**
+ * Simple KeyListener for handling Key events
+ * 
+ * @author Vikker
+ *
+ */
 public class CustomKeyListener implements KeyEventDispatcher {
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent e) {

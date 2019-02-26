@@ -213,7 +213,7 @@ public class Overlay {
 			return iIcons[i];
 		}
 
-		private ImageIcon[] loadImages() {
+		private void loadImages() {
 			iIcons[0] = new ImageIcon((getClass().getResource("/images/play.png")));
 			iIcons[1] = new ImageIcon((getClass().getResource("/images/pause.png")));
 			iIcons[2] = new ImageIcon((getClass().getResource("/images/stop.png")));
@@ -227,7 +227,6 @@ public class Overlay {
 				Image newimg = image.getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH);
 				iIcons[i] = new ImageIcon(newimg);
 			}
-			return iIcons;
 		}
 	}
 

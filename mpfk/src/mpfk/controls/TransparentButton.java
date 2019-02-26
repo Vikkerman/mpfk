@@ -9,8 +9,9 @@ import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-
 /**
+ * Transparent JButton class where can change the button icons on clicking.
+ * Something like JToggleButton, but it's working backwards.
  * 
  * @author Vikker
  *
@@ -43,6 +44,10 @@ public class TransparentButton extends JButton {
 
 		setOn();
 		setIcon(icoSelected);
+	}
+	
+	public TransparentButton(ImageIcon icoDeselected, ImageIcon icoSelected, int width) {
+		this(icoDeselected, icoSelected, width, 0);
 	}
 
 	public TransparentButton(ImageIcon icoDeselected, ImageIcon icoSelected, int width, int indX) {

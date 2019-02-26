@@ -10,9 +10,10 @@ import java.util.List;
 import javax.swing.TransferHandler;
 
 import mpfk.createGUI;
-
 /**
- * @author: ABika https://stackoverflow.com/a/39415436
+ * Drag and drop handler class
+ * 
+ * based on: ABika https://stackoverflow.com/a/39415436
  */
 public final class FileDropHandler extends TransferHandler {
 	private static final long serialVersionUID = 1L;
@@ -41,13 +42,10 @@ public final class FileDropHandler extends TransferHandler {
 			return false;
 		}
 
-		// createGUI.fileDir.clear();
 		createGUI.listOfMine.clear();
 		List<File> filesDropped = new ArrayList<File>();
 		for (File file : files) {
-			System.out.println(" >>> dropped >>>" + file);
 			if (createGUI.movieFile(file)) {
-				System.out.println(" >>> direkt file >>>" + file);
 				filesDropped.add(file);
 			} else {
 				createGUI.fileDir.add(file.getAbsolutePath());

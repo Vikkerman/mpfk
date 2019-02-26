@@ -15,8 +15,9 @@ import javax.swing.JComponent;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 
 import mpfk.createGUI;
-
 /**
+ * Transparent slider for tracking movies.
+ * 
  * based on: https://stackoverflow.com/a/28909255
  */
 public class TransparentSlider extends BasicProgressBarUI {

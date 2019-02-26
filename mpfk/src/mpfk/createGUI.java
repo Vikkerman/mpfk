@@ -56,9 +56,15 @@ import mpfk.util.IconCreatorThread;
 import mpfk.util.LoadSettings;
 import mpfk.util.MovieIcon;
 import mpfk.util.Snapshots;
-
+/**
+ * Media Player for kids main class.
+ * 
+ * @author Vikker
+ *
+ */
 public class createGUI {
 	private static final String FILESEPARATOR = File.separator;
+	private final static String MENUBARCOLORACTIVE = "#228388";
 	private static final String[] VLC_ARGS = { "--video-filter=deinterlace" };// --direct3d11-hw-blending, --vout=gl
 	public static JFrame frame;
 	public static JPanel moviePanel, searchPanel;
@@ -84,10 +90,6 @@ public class createGUI {
 	private static Object lock = new Object();
 	private static SettingsWindow settingsWindows = null;
 	public static IconCreatorThread pictureLoaderThread;
-
-	public static EmbeddedMediaPlayer getEMP() {
-		return emp;
-	}
 
 	public createGUI() {
 		defaultIcon = new ImageIcon((getClass().getResource("/images/movie.jpg")));
@@ -140,14 +142,10 @@ public class createGUI {
 	}
 
 	private void createMenuBar() {
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		setLookAndFeel();
 
 		menuBar = new ColoredMenuBar();
-		menuBar.setColor("#228388");
+		menuBar.setColor(MENUBARCOLORACTIVE);
 		menuBar.addSettingsMenu();
 		menuBar.addExitMenu();
 		menuBar.add(Box.createHorizontalGlue());
@@ -155,6 +153,14 @@ public class createGUI {
 
 		frame.setJMenuBar(menuBar);
 		frame.setUndecorated(true);
+	}
+	
+	private void setLookAndFeel() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	private void createContentPanel() {
@@ -184,9 +190,8 @@ public class createGUI {
 		searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.Y_AXIS));
 
 		File dir = new File(System.getProperty("user.dir") + FILESEPARATOR + "covers" + FILESEPARATOR);
-		if (!dir.exists()) {
-			dir.mkdirs();
-		}
+		dir.mkdirs();
+
 		File[] files = dir.listFiles((d, name) -> name.endsWith(".png"));
 
 		imageArray = new ImageIcon[files.length];
@@ -241,15 +246,7 @@ public class createGUI {
 	}
 
 	public static void setNewMovieList() {
-		if (pictureLoaderThread.isAlive()) {
-			pictureLoaderThread.stopThread();
-		}
-		clearMovieList();
-		loadMovieList();
-		setMovieList();
-		currentMovie = 0;
-		String fileString = listOfMine.get(currentMovie).getAbsolutePath();
-		playFile(fileString);
+		setNewMovieList(null);
 	}
 
 	public static void setNewMovieList(List<File> filesDropped) {
@@ -340,7 +337,7 @@ public class createGUI {
 		labels.add(new MovieIcon(iconString, i, ifThereIsAnImage(listOfMine.get(i).getAbsolutePath().toString())));
 		labels.get(i).addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				currentMovie = Integer.parseInt(((AbstractButton) e.getSource()).getName());
+				currentMovie = ((MovieIcon) e.getSource()).getIndex();
 				String fileString = listOfMine.get(currentMovie).getAbsolutePath();
 				labels.get(previousMovie).focusOff();
 				labels.get(currentMovie).focusOn();

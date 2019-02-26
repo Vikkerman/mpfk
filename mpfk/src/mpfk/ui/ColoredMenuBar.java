@@ -16,7 +16,6 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 import mpfk.createGUI;
-
 /**
  * Coloring JMenuBar
  * 

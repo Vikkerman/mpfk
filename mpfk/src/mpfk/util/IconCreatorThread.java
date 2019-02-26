@@ -1,5 +1,10 @@
 package mpfk.util;
-
+/**
+ * Simple thread extension for easier handling.
+ * 
+ * @author Vikker
+ *
+ */
 public class IconCreatorThread extends Thread {
 	protected boolean shouldRun;
 

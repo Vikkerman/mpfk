@@ -7,12 +7,18 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import mpfk.createGUI;
-
+/**
+ * Simple JPopupMenu
+ * 
+ * @author Vikker
+ *
+ */
 public class PopUpMenu extends JPopupMenu {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
 	JMenuItem clearItem, settingsItem;
 
 	public PopUpMenu() {
