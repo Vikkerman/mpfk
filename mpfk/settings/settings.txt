@@ -2,6 +2,6 @@ mainDir
 C:\Users\Vikker\git\vlcmovie\vlcmovie
 
 movieDir
-E:\Downloads 2019
+D:\Downloads 2017\Doctor.Who.2005.S11E04.HDTV.x264-RiVER
 
 endOfSettings
