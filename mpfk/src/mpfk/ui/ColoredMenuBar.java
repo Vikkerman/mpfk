@@ -1,8 +1,10 @@
 package mpfk.ui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -10,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -29,11 +32,14 @@ public class ColoredMenuBar extends JMenuBar {
 	private JMenuItem settingsMi = null;
 	private JMenu exitMenu = null;
 	private JMenuItem exitMi = null;
+	private ColoredMenu sizeButton;
 	private ColoredMenu closeXButton;
 	// private final String MENUBARCOLORINACTIVE = "#63B2B6";
 	private final String MENUBARCOLORACTIVE = "#228388";
 	private final String CLOSEBUTTONACTIVE = "#e04343";
 	private final String CLOSEBUTTONINACTIVE = "#c75050";
+	private final String SIZEBUTTONACTIVE = "#63B2B6";
+	private final String SIZEBUTTONINACTIVE = "#228388";
 
 	public void setColor(String color) {
 		bgColor = hex2Rgb(color);
@@ -54,6 +60,7 @@ public class ColoredMenuBar extends JMenuBar {
 	}
 
 	public void addSettingsMenu() {
+		list();
 		settingsMenu = new JMenu("Settings");
 		settingsMenu.setForeground(Color.WHITE);
 		settingsMi = new JMenuItem("Settings");
@@ -61,7 +68,7 @@ public class ColoredMenuBar extends JMenuBar {
 		settingsMi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
 		settingsMi.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				createGUI.reloadMoviList();
+				createGUI.settingsMenu();
 			}
 		});
 		settingsMenu.add(settingsMi);
@@ -85,6 +92,58 @@ public class ColoredMenuBar extends JMenuBar {
 
 	public void addCloseXButton() {
 		addCloseXButton(null);
+	}
+	
+	public void addSizeButton() {
+		sizeButton = new ColoredMenu("Exit");
+		sizeButton.setForeground(Color.WHITE);
+		sizeButton.setColor(hex2Rgb(SIZEBUTTONINACTIVE));
+		sizeButton.setChar("_");
+		sizeButton.addMouseListener(new MouseListener() {
+			boolean isSelected = false;
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				((ColoredMenu) e.getSource()).setColor(hex2Rgb(SIZEBUTTONACTIVE));
+				isSelected = true;
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				((ColoredMenu) e.getSource()).setColor(hex2Rgb(SIZEBUTTONINACTIVE));
+				isSelected = false;
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (isSelected) {
+					int screenW = (int) Math.round(Toolkit.getDefaultToolkit().getScreenSize().getWidth());
+					int screenH = (int) Math.round(Toolkit.getDefaultToolkit().getScreenSize().getHeight());
+					int frameW = createGUI.frame.getWidth();
+					
+					if (Math.abs(frameW - screenW) < Math.abs(frameW - (screenW / 2))) {
+						createGUI.frame.setSize(new Dimension(screenW/2,screenH/2));
+						createGUI.frame.setLocationRelativeTo(null);
+					} else {
+						createGUI.frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+						createGUI.frame.setLocationRelativeTo(null);
+					}
+					
+					createGUI.overlay.suspendTimer();
+					
+				}
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			}
+
+		});
+		add(sizeButton);
 	}
 
 	public void addCloseXButton(JDialog parent) {

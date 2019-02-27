@@ -26,7 +26,7 @@ public class PopUpMenu extends JPopupMenu {
 		settingsItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				createGUI.reloadMoviList();
+				createGUI.settingsMenu();
 			}
 		});
 

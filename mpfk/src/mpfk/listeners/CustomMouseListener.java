@@ -36,7 +36,7 @@ public class CustomMouseListener implements MouseListener {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		if (e.getSource().equals(createGUI.overlay.seekerBar) && SwingUtilities.isLeftMouseButton(e)) {
-			positioning(e);
+//			positioning(e);
 		}
 	}
 

@@ -60,6 +60,24 @@ public class Overlay {
 	public void resetTimer() {
 		MouseMotionTimer.resetTimer();
 	}
+	
+	public void suspendTimer() {
+		MouseMotionTimer.suspend();
+	}
+	
+	public void setOverlayChanges() {
+		if (createGUI.frame.getLocation().getX() != createGUI.overlay.window().getLocation().getX()) {
+			createGUI.overlay.window().setLocation((int)Math.round(createGUI.frame.getLocation().getX()), (int)Math.round(createGUI.frame.getLocation().getY() + 21));
+		}
+		if (!createGUI.movieCanvas.getSize().equals(createGUI.overlay.window().getSize())) {
+			createGUI.overlay.window().setSize(createGUI.movieCanvas.getSize());
+			createGUI.overlay.window().repaint();
+		}
+		
+		while (createGUI.overlay.window().isVisible()) {
+			createGUI.overlay.window().setVisible(false);
+		}
+	}
 
 	public Overlay(JFrame parent) {
 		overlayWindow = new OverlayWindow(parent);
@@ -103,6 +121,10 @@ public class Overlay {
 		overlayWindow.add(topPanel, BorderLayout.NORTH);
 		overlayWindow.add(bottomPanel, BorderLayout.SOUTH);
 
+		setOverlay();
+	}
+	
+	public void setOverlay() {
 		createGUI.emp.setOverlay(overlayWindow);
 	}
 
@@ -126,15 +148,22 @@ public class Overlay {
 	}
 
 	public void setVolumeButtons() {
+		int volumeLevel = 0;
 		for (int i = 0; i < buttonVolume.length; i++) {
 			if (buttonVolume[i] == null) {
 				break;
 			}
 			if (createGUI.emp.getVolume() >= (i + 1) * 10) {
 				buttonVolume[i].setOn();
+				volumeLevel++;
 			} else {
 				buttonVolume[i].setOff();
 			}
+		}
+		if (volumeLevel > 0 && !buttonMute.turedOn()) {
+			buttonMute.setOn();
+		} else if (volumeLevel == 0) {
+			buttonMute.setOff();
 		}
 	}
 
@@ -148,6 +177,7 @@ public class Overlay {
 					createGUI.emp.setVolume(volume);
 					initMute.setOn();
 				} else {
+					volume = createGUI.emp.getVolume();
 					createGUI.emp.setVolume(0);
 					initMute.setOff();
 				}
@@ -259,6 +289,7 @@ public class Overlay {
 						int wSeeker = seeker.getWidth() - INNERBORDER;
 						int progressSet = (int) Math.round((pMouse.x - OUTERBORDER) / (wSeeker / SCALE));
 						seeker.setValue(progressSet);
+						System.out.println("Dragged");
 						createGUI.emp.setPosition((float) progressSet / SCALE);
 					}
 				}

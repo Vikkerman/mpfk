@@ -22,6 +22,7 @@ public class TransparentButton extends JButton {
 	private ImageIcon icoA;
 	private ImageIcon icoP;
 	private int index = 0;
+	private boolean turnedOn = false;
 
 	public TransparentButton() {
 		this(null, null);
@@ -80,10 +81,16 @@ public class TransparentButton extends JButton {
 
 	public void setOn() {
 		setIcon(icoA);
+		turnedOn = true;
 	}
 
 	public void setOff() {
 		setIcon(icoP);
+		turnedOn = false;
+	}
+	
+	public boolean turedOn() {
+		return turnedOn;
 	}
 
 	@Override

@@ -67,8 +67,8 @@ public class createGUI {
 	public static List<String> fileDir = new ArrayList<>();
 	public static List<File> listOfMine = new ArrayList<>();
 
-	public static VlcjLoader3 emp;
-//	public static VlcjLoader4 emp;
+	public static VlcjLoader3 emp = new VlcjLoader3();
+//	public static VlcjLoader4 emp = new VlcjLoader4();
 	public static Canvas movieCanvas;
 
 	public static Overlay overlay;
@@ -79,7 +79,7 @@ public class createGUI {
 
 	private static Object lock = new Object();
 	private static SettingsWindow settingsWindows = null;
-	public static IconCreatorThread pictureLoaderThread;
+	public static IconCreatorThread pictureLoaderThread = new IconCreatorThread();
 
 	public createGUI() {
 		defaultIcon = new ImageIcon((getClass().getResource("/images/movie.jpg")));
@@ -101,6 +101,7 @@ public class createGUI {
 		});
 		frame.addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseDragged(MouseEvent e) {
+				overlay.suspendTimer();
 				Point p = frame.getLocation();
 				frame.setLocation(p.x + e.getX() - point.x, p.y + e.getY() - point.y);
 			}
@@ -111,7 +112,7 @@ public class createGUI {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
-		frame.setResizable(true);
+		frame.setResizable(false);
 		frame.setVisible(true);
 
 		setVLC();
@@ -139,6 +140,7 @@ public class createGUI {
 		menuBar.addSettingsMenu();
 		menuBar.addExitMenu();
 		menuBar.add(Box.createHorizontalGlue());
+		menuBar.addSizeButton();
 		menuBar.addCloseXButton();
 
 		frame.setJMenuBar(menuBar);
@@ -165,10 +167,6 @@ public class createGUI {
 	public static void loadMovieList(List<File> fileList) {
 		for (String dirs : fileDir) {
 			listFilesFrom(dirs, listOfMine);
-		}
-
-		while (listOfMine.size() < 1) {
-			reloadMoviList();
 		}
 		if (fileList != null) {
 			listOfMine.addAll(fileList);
@@ -295,7 +293,7 @@ public class createGUI {
 		searchPanel.removeAll();
 	}
 
-	public static void reloadMoviList() {
+	public static void settingsMenu() {
 		String oldDir = new LoadSettings().getSettings("movieDir");
 		settingsWindows = new SettingsWindow(0);
 		Thread t = new Thread() {
@@ -388,32 +386,36 @@ public class createGUI {
 	}
 
 	private void setVLC() {
-		emp = new VlcjLoader3(frame, movieCanvas);
-//		emp = new VlcjLoader4(frame, movieCanvas);
+		emp.setUp(frame, movieCanvas);
+//		emp.setUp(frame, movieCanvas);
 		emp.setEventListener();
 
-		labels.get(currentMovie).focusOn();
+		if (labels.size() > 0) {
+			labels.get(currentMovie).focusOn();
+		}
 		overlay = new Overlay(frame);
 		playFile();
 	}
 
 	public static void playFile() {
-		String file = listOfMine.get(currentMovie).getAbsolutePath();
-		
-		emp.prepare(file);
-		emp.play();
-		emp.setVolume(overlay.getVolume());
-		new Thread() {
-			public void run() {
-				overlay.setVolumeButtons();
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+		if (emp.isSetted()) {
+			String file = listOfMine.get(currentMovie).getAbsolutePath();
+
+			emp.prepare(file);
+			emp.play();
+			emp.setVolume(overlay.getVolume());
+			new Thread() {
+				public void run() {
+					overlay.setVolumeButtons();
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					overlay.setVolumeButtons();
 				}
-				overlay.setVolumeButtons();
-			}
-		}.start();
+			}.start();
+		}
 	}
 
 	public static boolean movieFile(File file) {

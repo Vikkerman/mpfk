@@ -22,8 +22,17 @@ public class VlcjLoader4 {
 	public EmbeddedMediaPlayer embeddedMediaPlayer = null;
 	
 	private static final String[] VLC_ARGS = { "--video-filter=deinterlace" };// --direct3d11-hw-blending, --vout=gl
+	private static boolean setted = false;
 	
-	public VlcjLoader4(JFrame jFrame, Canvas canvas) {
+	public  VlcjLoader4() {
+		setted = false;
+	}
+	
+	public boolean isSetted() {
+		return setted;
+	}
+	public void setUp(JFrame jFrame, Canvas canvas) {
+		setted = true;
 		loadLIBvlc();
 		
 		MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory(VLC_ARGS);

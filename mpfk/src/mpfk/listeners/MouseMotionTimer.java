@@ -15,38 +15,67 @@ import mpfk.createGUI;
  */
 public class MouseMotionTimer {
 	private static int restTime = 0;
+	private static boolean suspended = false;
 	private static Point mouseLastPosition = MouseInfo.getPointerInfo().getLocation();
 
 	public static void resetTimer() {
 		restTime = 0;
 	}
+	
+	public static void suspend() {
+		if (!suspended) {
+			suspended = true;
+			new Thread() {
+				public void run() {
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					createGUI.overlay.setOverlayChanges();
+					back();
+				}
+			}.start();
+		}
+	}
+	
+	public static void back() {
+		suspended = false;
+	}
 
 	public void startTimer() {
 		new Thread() {
 			public void run() {
+				
 				while (true) {
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					Point newPosition = MouseInfo.getPointerInfo().getLocation();
+					
+					if (!suspended) {
+						Point newPosition = MouseInfo.getPointerInfo().getLocation();
 
-					if (mouseLastPosition.equals(newPosition)) {
-						restTime++;
+						if (mouseLastPosition.equals(newPosition) || (createGUI.frame.getContentPane().getMousePosition() == null)) {
+							restTime++;
+						} else {
+							restTime = 0;
+						}
+
+						mouseLastPosition = newPosition;
+
+						if (restTime >= 30) {
+							if (createGUI.overlay.window().isVisible() && createGUI.frame.isActive())
+								createGUI.overlay.window().setVisible(false);
+						} else {
+							if (!createGUI.overlay.window().isVisible())
+								createGUI.overlay.window().setVisible(true);
+						}
 					} else {
-						restTime = 0;
+						createGUI.overlay.window().setVisible(false);
 					}
-
-					mouseLastPosition = newPosition;
-
-					if (restTime >= 30) {
-						if (createGUI.overlay.window().isVisible() && createGUI.frame.isActive())
-							createGUI.overlay.window().setVisible(false);
-					} else {
-						if (!createGUI.overlay.window().isVisible())
-							createGUI.overlay.window().setVisible(true);
-					}
+					
 				}
 			}
 		}.start();

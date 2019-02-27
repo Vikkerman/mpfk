@@ -20,12 +20,23 @@ import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import uk.co.caprica.vlcj.runtime.windows.WindowsRuntimeUtil;
 
 public class VlcjLoader3 {
-public EmbeddedMediaPlayer embeddedMediaPlayer = null;
-private static final String FILESEPARATOR = File.separator;
+	public EmbeddedMediaPlayer embeddedMediaPlayer = null;
+
+	private static final String FILESEPARATOR = File.separator;
 	
 	private static final String[] VLC_ARGS = { "--video-filter=deinterlace" };// --direct3d11-hw-blending, --vout=gl
+	private static boolean setted = false;
 	
-	public VlcjLoader3(JFrame jFrame, Canvas canvas) {
+	public  VlcjLoader3() {
+		setted = false;
+	}
+	
+	public boolean isSetted() {
+		return setted;
+	}
+	
+	public void setUp(JFrame jFrame, Canvas canvas) {
+		setted = true;
 		loadLIBvlc();
 		
 		MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory(VLC_ARGS);
