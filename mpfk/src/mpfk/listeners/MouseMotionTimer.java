@@ -57,7 +57,7 @@ public class MouseMotionTimer {
 					if (!suspended) {
 						Point newPosition = MouseInfo.getPointerInfo().getLocation();
 
-						if (mouseLastPosition.equals(newPosition) || (createGUI.frame.getContentPane().getMousePosition() == null)) {
+						if (mouseLastPosition.equals(newPosition) || (createGUI.movieCanvas.getMousePosition() == null)) {
 							restTime++;
 						} else {
 							restTime = 0;

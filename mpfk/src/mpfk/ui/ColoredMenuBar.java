@@ -34,12 +34,13 @@ public class ColoredMenuBar extends JMenuBar {
 	private JMenuItem exitMi = null;
 	private ColoredMenu sizeButton;
 	private ColoredMenu closeXButton;
-	// private final String MENUBARCOLORINACTIVE = "#63B2B6";
+	private final String MENUBARCOLORINACTIVE = "#63B2B6";
 	private final String MENUBARCOLORACTIVE = "#228388";
 	private final String CLOSEBUTTONACTIVE = "#e04343";
-	private final String CLOSEBUTTONINACTIVE = "#c75050";
-	private final String SIZEBUTTONACTIVE = "#63B2B6";
-	private final String SIZEBUTTONINACTIVE = "#228388";
+	private final String CLOSEBUTTONINACTIVE = "#A42C2C";
+	private final String SIZEBUTTONACTIVE = MENUBARCOLORINACTIVE;
+	private final String SIZEBUTTONINACTIVE = MENUBARCOLORACTIVE;
+	private final Dimension BUTTONSIZE = new Dimension(50, 20);
 
 	public void setColor(String color) {
 		bgColor = hex2Rgb(color);
@@ -51,18 +52,17 @@ public class ColoredMenuBar extends JMenuBar {
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(bgColor);
 		g2d.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
-
 	}
 
 	public static Color hex2Rgb(String colorStr) {
-		return new Color(Integer.valueOf(colorStr.substring(1, 3), 16), Integer.valueOf(colorStr.substring(3, 5), 16),
-				Integer.valueOf(colorStr.substring(5, 7), 16));
+		return new Color(Integer.valueOf(colorStr.substring(1, 3), 16), Integer.valueOf(colorStr.substring(3, 5), 16), Integer.valueOf(colorStr.substring(5, 7), 16));
 	}
 
 	public void addSettingsMenu() {
 		list();
 		settingsMenu = new JMenu("Settings");
 		settingsMenu.setForeground(Color.WHITE);
+		settingsMenu.setBorderPainted(false);
 		settingsMi = new JMenuItem("Settings");
 		settingsMi.setMnemonic(KeyEvent.VK_S);
 		settingsMi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.ALT_MASK));
@@ -78,6 +78,7 @@ public class ColoredMenuBar extends JMenuBar {
 	public void addExitMenu() {
 		exitMenu = new JMenu("Exit");
 		exitMenu.setForeground(Color.WHITE);
+		exitMenu.setBorderPainted(false);
 		exitMi = new JMenuItem("Exit");
 		exitMi.setMnemonic(KeyEvent.VK_E);
 		exitMi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.ALT_MASK));
@@ -149,6 +150,9 @@ public class ColoredMenuBar extends JMenuBar {
 	public void addCloseXButton(JDialog parent) {
 		closeXButton = new ColoredMenu("Exit");
 		closeXButton.setForeground(Color.WHITE);
+		closeXButton.setMaximumSize(BUTTONSIZE);
+		closeXButton.setMinimumSize(BUTTONSIZE);
+		closeXButton.setPreferredSize(BUTTONSIZE);
 		closeXButton.setColor(hex2Rgb(CLOSEBUTTONINACTIVE));
 		closeXButton.addMouseListener(new MouseListener() {
 			boolean isSelected = false;

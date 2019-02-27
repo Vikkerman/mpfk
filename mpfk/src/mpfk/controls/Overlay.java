@@ -14,7 +14,6 @@ import java.awt.event.MouseMotionAdapter;
 
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
@@ -32,7 +31,7 @@ public class Overlay {
 	public MouseMotionTimer mouseMotionTimer;
 	private LoadAndScaleImages imageIcons = new LoadAndScaleImages();
 	private TransparentButton buttonPlay;
-	private JButton buttonStop;
+	private TransparentButton buttonStop;
 	private TransparentButton buttonMute;
 	private static TransparentButton[] buttonVolume;
 	private int volume = 50;
@@ -85,6 +84,8 @@ public class Overlay {
 
 		buttonMute = playMute();
 		buttonVolume = volumeButtons();
+		
+		
 
 		ButtonGroup groupVolume = new ButtonGroup();
 		groupVolume.add(buttonMute);
@@ -121,7 +122,17 @@ public class Overlay {
 		overlayWindow.add(topPanel, BorderLayout.NORTH);
 		overlayWindow.add(bottomPanel, BorderLayout.SOUTH);
 
+		buttonsLookAndFeel();
 		setOverlay();
+	}
+	
+	private void buttonsLookAndFeel() {
+		buttonMute.setBorderPainted(false);
+		for (TransparentButton button : buttonVolume) {
+			button.setBorderPainted(false);
+		}
+		buttonPlay.setBorderPainted(false);
+		buttonStop.setBorderPainted(false);
 	}
 	
 	public void setOverlay() {
@@ -207,14 +218,15 @@ public class Overlay {
 						createGUI.emp.pause();
 					}
 				}
+				MouseMotionTimer.resetTimer();
 			}
 		});
 
 		return initPlay;
 	}
 
-	private JButton stopButton() {
-		JButton initStop = new JButton(imageIcons.getImage(2));
+	private TransparentButton stopButton() {
+		TransparentButton initStop = new TransparentButton(imageIcons.getImage(2), imageIcons.getImage(2));
 		initStop.setBackground(new Color(0, 0, 0, 0));
 		initStop.setContentAreaFilled(false);
 
@@ -228,6 +240,7 @@ public class Overlay {
 			public void actionPerformed(ActionEvent e) {
 				buttonPlay.setOn();
 				createGUI.emp.stop();
+				MouseMotionTimer.resetTimer();
 			}
 		});
 		return initStop;
@@ -275,7 +288,7 @@ public class Overlay {
 
 		public Seeker() {
 			seeker = new JProgressBar();
-			seeker.setValue(1);
+			seeker.setValue(0);
 			seeker.setMaximum((int) SCALE);
 			seeker.setOpaque(false);
 			seeker.setBorderPainted(false);
@@ -289,9 +302,9 @@ public class Overlay {
 						int wSeeker = seeker.getWidth() - INNERBORDER;
 						int progressSet = (int) Math.round((pMouse.x - OUTERBORDER) / (wSeeker / SCALE));
 						seeker.setValue(progressSet);
-						System.out.println("Dragged");
 						createGUI.emp.setPosition((float) progressSet / SCALE);
 					}
+					MouseMotionTimer.resetTimer();
 				}
 			});
 
@@ -301,7 +314,7 @@ public class Overlay {
 						float progress = (float) (createGUI.emp.getPosition() * SCALE);
 						seeker.setValue(Math.round(progress));
 						try {
-							Thread.sleep(1000);
+							Thread.sleep(100);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}

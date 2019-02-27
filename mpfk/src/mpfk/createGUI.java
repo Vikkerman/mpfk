@@ -28,7 +28,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -43,6 +42,7 @@ import mpfk.listeners.CustomMouseListenerRightMouseButton;
 import mpfk.listeners.FileDropHandler;
 import mpfk.ui.ColoredMenuBar;
 import mpfk.ui.ScrollBarUI;
+import mpfk.util.FocusableLabel;
 import mpfk.util.IconCreatorThread;
 import mpfk.util.LoadSettings;
 import mpfk.util.MovieIcon;
@@ -63,7 +63,8 @@ public class createGUI {
 	public static JPanel moviePanel, searchPanel;
 	public static JScrollPane searchScrollPane;
 	public static ColoredMenuBar menuBar;
-	public static List<MovieIcon> labels = new ArrayList<MovieIcon>();
+	public static List<MovieIcon> icons = new ArrayList<MovieIcon>();
+	public static List<FocusableLabel> labels = new ArrayList<FocusableLabel>();
 	public static int previousMovie = 0, currentMovie = 0;
 	private static Point point = new Point();
 
@@ -111,6 +112,7 @@ public class createGUI {
 		});
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(new CustomKeyListener());
+		frame.setBackground(Color.BLACK);
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
@@ -136,8 +138,8 @@ public class createGUI {
 	}
 
 	private void createMenuBar() {
-//		setLookAndFeel();
-		setCustomLookAndFeel();
+		setLookAndFeel();
+//		setCustomLookAndFeel();
 		
 		menuBar = new ColoredMenuBar();
 		menuBar.setColor(MENUBARCOLORACTIVE);
@@ -181,10 +183,8 @@ public class createGUI {
 	
 	private void setCustomLookAndFeel() {
 		list();
-		
-		UIManager.put("Menu.selectionBackground", new Color(0, 0, 200, 20));
-		
-		
+
+		UIManager.put("Menu.selectionBackground", new Color(0, 0, 200, 20));		
 		
 	}
 
@@ -207,6 +207,7 @@ public class createGUI {
 	}
 
 	public static void setMovieList() {
+		icons.clear();
 		labels.clear();
 		searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.Y_AXIS));
 
@@ -250,6 +251,10 @@ public class createGUI {
 						searchPanel.revalidate();
 					}
 				}
+				searchPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+				Dimension currMaxSize = searchPanel.getMaximumSize();
+				searchPanel.setPreferredSize(new Dimension(170, currMaxSize.height));
+				searchPanel.revalidate();
 				try {
 					if (shouldRun) {
 						new Snapshots3(listOfMine);
@@ -278,7 +283,7 @@ public class createGUI {
 		clearMovieList();
 		loadMovieList(filesDropped);
 		setMovieList();
-		currentMovie = 0;
+		previousMovie = currentMovie = 0;
 		playFile();
 	}
 
@@ -367,23 +372,30 @@ public class createGUI {
 			e.printStackTrace();
 		}
 	}
+	
+	private static void setActivateIcon() {
+		icons.get(previousMovie).focusOff();
+		icons.get(currentMovie).focusOn();
+		labels.get(previousMovie).focusOff();
+		labels.get(currentMovie).focusOn();
+	}
 
 	private static void createIcons(int i) {
 		String iconString = listOfMine.get(i).getName().toString();
-		labels.add(new MovieIcon(iconString, i, ifThereIsAnImage(listOfMine.get(i).getAbsolutePath().toString())));
-		labels.get(i).addActionListener(new ActionListener() {
+		icons.add(new MovieIcon(iconString, i, ifThereIsAnImage(listOfMine.get(i).getAbsolutePath().toString())));
+		FocusableLabel label = new FocusableLabel(iconString);
+		label.setForeground(Color.white);
+		labels.add(label);
+		icons.get(i).addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				currentMovie = ((MovieIcon) e.getSource()).getIndex();
-				labels.get(previousMovie).focusOff();
-				labels.get(currentMovie).focusOn();
+				setActivateIcon();
 				previousMovie = currentMovie;
 				playFile();
 			}
 		});
+		searchPanel.add(icons.get(i));
 		searchPanel.add(labels.get(i));
-		JLabel label = new JLabel(iconString);
-		label.setForeground(Color.white);
-		searchPanel.add(label);
 		// searchPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 	}
 
@@ -423,9 +435,11 @@ public class createGUI {
 //		emp.setUp(frame, movieCanvas);
 		emp.setEventListener();
 
-		if (labels.size() > 0) {
+		if (icons.size() > 0) {
+			icons.get(currentMovie).focusOn();
 			labels.get(currentMovie).focusOn();
 		}
+		
 		overlay = new Overlay(frame);
 		playFile();
 	}
@@ -433,9 +447,10 @@ public class createGUI {
 	public static void playFile() {
 		if (emp.isSetted()) {
 			String file = listOfMine.get(currentMovie).getAbsolutePath();
-
+			setActivateIcon();
 			emp.prepare(file);
 			emp.play();
+			previousMovie = currentMovie;
 			emp.setVolume(overlay.getVolume());
 			new Thread() {
 				public void run() {

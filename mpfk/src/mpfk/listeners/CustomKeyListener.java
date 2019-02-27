@@ -55,8 +55,8 @@ public class CustomKeyListener implements KeyEventDispatcher {
 			} else {
 				createGUI.currentMovie = 0;
 			}
-			createGUI.labels.get(createGUI.previousMovie).focusOff();
-			createGUI.labels.get(createGUI.currentMovie).focusOn();
+			createGUI.icons.get(createGUI.previousMovie).focusOff();
+			createGUI.icons.get(createGUI.currentMovie).focusOn();
 			createGUI.previousMovie = createGUI.currentMovie;
 
 			createGUI.playFile();
@@ -72,8 +72,8 @@ public class CustomKeyListener implements KeyEventDispatcher {
 			} else {
 				createGUI.currentMovie = createGUI.listOfMine.size() - 1;
 			}
-			createGUI.labels.get(createGUI.previousMovie).focusOff();
-			createGUI.labels.get(createGUI.currentMovie).focusOn();
+			createGUI.icons.get(createGUI.previousMovie).focusOff();
+			createGUI.icons.get(createGUI.currentMovie).focusOn();
 			createGUI.previousMovie = createGUI.currentMovie;
 
 			createGUI.playFile();
