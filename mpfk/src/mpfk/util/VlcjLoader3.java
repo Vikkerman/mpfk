@@ -31,10 +31,6 @@ public class VlcjLoader3 {
 		setted = false;
 	}
 	
-	public boolean isSetted() {
-		return setted;
-	}
-	
 	public void setUp(JFrame jFrame, Canvas canvas) {
 		setted = true;
 		loadLIBvlc();
@@ -70,6 +66,10 @@ public class VlcjLoader3 {
 			NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(),"C:" + FILESEPARATOR + "Program Files" + FILESEPARATOR + "VideoLAN" + FILESEPARATOR + "VLC");
 		}
 		Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
+	}
+	
+	public boolean isSetted() {
+		return setted;
 	}
 	
 	public void prepare(String fileString) {
@@ -110,7 +110,9 @@ public class VlcjLoader3 {
 	}
 	
 	public void setPosition(float value) {
-		embeddedMediaPlayer.setPosition(value);
+		if (isSeekable()) {
+			embeddedMediaPlayer.setPosition(value);
+		}
 	}
 	
 	public float getPosition() {

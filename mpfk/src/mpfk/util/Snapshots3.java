@@ -61,7 +61,7 @@ public class Snapshots3 {
 			            mediaPlayer.saveSnapshot(snapshotFile, imageWidth, 0);
 			            snapshotTakenLatch.await(); // Might wait forever if error
 			            
-			            createGUI.icons.get(i).setImage(snapshotFile);
+			            createGUI.searchPanel.setIconList(i,snapshotFile);
 			
 			            mediaPlayer.pause();
 			            mediaPlayer.stop();

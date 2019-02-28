@@ -206,7 +206,7 @@ public class Overlay {
 		initPlay.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (createGUI.listOfMine.size() > 0) {
+				if (!createGUI.searchPanel.movieListisEmpty()) {
 					if (!createGUI.emp.isSeekable()) {
 						initPlay.setOff();
 						createGUI.playFile();

@@ -34,7 +34,7 @@ public class PopUpMenu extends JPopupMenu {
 		clearItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				createGUI.clearPlayList();
+				createGUI.searchPanel.clearPlayList();
 			}
 		});
 

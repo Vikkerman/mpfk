@@ -45,41 +45,37 @@ public class CustomKeyListener implements KeyEventDispatcher {
 
 		// Clear PlayList - 'C' and 'c' keys
 		if (key == 67 || key == 99) {
-			createGUI.clearPlayList();
+			createGUI.searchPanel.clearPlayList();
 			MouseMotionTimer.resetTimer();
 		}
 
 		if (key == KeyEvent.VK_DOWN) {
-			if (createGUI.currentMovie < createGUI.listOfMine.size() - 1) {
-				createGUI.currentMovie++;
+			if (createGUI.searchPanel.getCurrentMovie() < createGUI.searchPanel.getMovieListSize() - 1) {
+				createGUI.searchPanel.nextCurrentMovie();
 			} else {
-				createGUI.currentMovie = 0;
+				createGUI.searchPanel.setCurrentMovie(0);
 			}
-			createGUI.icons.get(createGUI.previousMovie).focusOff();
-			createGUI.icons.get(createGUI.currentMovie).focusOn();
-			createGUI.previousMovie = createGUI.currentMovie;
+			createGUI.searchPanel.setActiveIcons();
 
 			createGUI.playFile();
 
-			int yCoor = createGUI.searchPanel.getComponent(createGUI.currentMovie * 2).getY() - 30;
-			createGUI.searchScrollPane.getViewport().setViewPosition(new java.awt.Point(0, yCoor));
+			int yCoor = createGUI.searchPanel.getComponent(createGUI.searchPanel.getCurrentMovie() * 2).getY() - 30;
+			createGUI.searchPanel.setScrollPaneViewPosition(new java.awt.Point(0, yCoor));
 			MouseMotionTimer.resetTimer();
 		}
 
 		if (key == KeyEvent.VK_UP) {
-			if (createGUI.currentMovie > 1) {
-				createGUI.currentMovie--;
+			if (createGUI.searchPanel.getCurrentMovie() > 1) {
+				createGUI.searchPanel.pervCurrentMovie();
 			} else {
-				createGUI.currentMovie = createGUI.listOfMine.size() - 1;
+				createGUI.searchPanel.setCurrentMovie(createGUI.searchPanel.getMovieListSize() - 1);
 			}
-			createGUI.icons.get(createGUI.previousMovie).focusOff();
-			createGUI.icons.get(createGUI.currentMovie).focusOn();
-			createGUI.previousMovie = createGUI.currentMovie;
+			createGUI.searchPanel.setActiveIcons();
 
 			createGUI.playFile();
 
-			int yCoor = createGUI.searchPanel.getComponent(createGUI.currentMovie * 2).getY() - 30;
-			createGUI.searchScrollPane.getViewport().setViewPosition(new java.awt.Point(0, yCoor));
+			int yCoor = createGUI.searchPanel.getComponent(createGUI.searchPanel.getCurrentMovie() * 2).getY() - 30;
+			createGUI.searchPanel.setScrollPaneViewPosition(new java.awt.Point(0, yCoor));
 			MouseMotionTimer.resetTimer();
 		}
 		return false;

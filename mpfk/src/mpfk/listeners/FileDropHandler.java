@@ -42,16 +42,16 @@ public final class FileDropHandler extends TransferHandler {
 			return false;
 		}
 
-		createGUI.listOfMine.clear();
+		createGUI.searchPanel.clearMovieList();
 		List<File> filesDropped = new ArrayList<File>();
 		for (File file : files) {
-			if (createGUI.movieFile(file)) {
+			if (createGUI.searchPanel.movieFile(file)) {
 				filesDropped.add(file);
 			} else {
-				createGUI.fileDir.add(file.getAbsolutePath());
+				createGUI.searchPanel.addToMovieDirfileDir(file.getAbsolutePath());
 			}
 		}
-		createGUI.setNewMovieList(filesDropped);
+		createGUI.searchPanel.setNewMovieList(filesDropped);
 		return true;
 	}
 }
