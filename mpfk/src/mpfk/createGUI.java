@@ -89,6 +89,7 @@ public class createGUI {
 		defaultIcon = new ImageIcon((getClass().getResource("/images/movie.jpg")));
 		frame = new JFrame("vlcMoviePlayer");
 
+		new LoadSettings();
 		createMenuBar();
 		createContentPanel();
 		fileDir.clear();
@@ -411,19 +412,21 @@ public class createGUI {
 	}
 
 	public static void listFilesFrom(String directoryName, List<File> files) {
-		File directory = new File(directoryName);
-
-		// Get all files from a directory.
-		File[] fileList = directory.listFiles();
-
-		if (fileList != null) {
-			for (File file : fileList) {
-				if (file.isFile() && movieFile(file)) {
-					files.add(file);
-				} else if (file.isDirectory()) {
-					String lastDirName = file.getName();
-					if (!lastDirName.contains("sample")) {
-						listFilesFrom(file.getAbsolutePath(), files);
+		if (directoryName != null) {
+			File directory = new File(directoryName);
+	
+			// Get all files from a directory.
+			File[] fileList = directory.listFiles();
+	
+			if (fileList != null) {
+				for (File file : fileList) {
+					if (file.isFile() && movieFile(file)) {
+						files.add(file);
+					} else if (file.isDirectory()) {
+						String lastDirName = file.getName();
+						if (!lastDirName.contains("sample")) {
+							listFilesFrom(file.getAbsolutePath(), files);
+						}
 					}
 				}
 			}
@@ -445,7 +448,7 @@ public class createGUI {
 	}
 
 	public static void playFile() {
-		if (emp.isSetted()) {
+		if (emp.isSetted() && !listOfMine.isEmpty()) {
 			String file = listOfMine.get(currentMovie).getAbsolutePath();
 			setActivateIcon();
 			emp.prepare(file);

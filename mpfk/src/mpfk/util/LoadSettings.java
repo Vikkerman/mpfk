@@ -52,7 +52,7 @@ public class LoadSettings {
 				settingsArray.add(System.getProperty("user.dir") + "");
 				settingsArray.add("");
 				settingsArray.add("movieDir");
-				settingsArray.add("E:" + FILESEPARATOR + "Downloads 2019");
+				settingsArray.add(System.getProperty("user.dir") + "");
 				settingsArray.add("");
 				settingsArray.add("endOfSettings");
 
@@ -75,6 +75,8 @@ public class LoadSettings {
 
 				outputWriter.flush();
 				outputWriter.close();
+				
+				loadSettings();
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}

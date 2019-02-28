@@ -1,7 +1,7 @@
 mainDir
-C:\Users\Vikker\git\vlcmovie\vlcmovie
+C:\Users\Vikker\git\mpfk\mpfk
 
 movieDir
-E:\Downloads 2019
+D:\Downloads 2017
 
 endOfSettings
