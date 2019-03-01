@@ -1,5 +1,7 @@
 package mpfk.util;
 
+import java.awt.Color;
+
 import javax.swing.JLabel;
 
 public class FocusableLabel extends JLabel {
@@ -13,6 +15,7 @@ public class FocusableLabel extends JLabel {
 	public FocusableLabel(String textString) {
 		text = textString;
 		setText(textString);
+		setForeground(Color.white);
 	}
 	
 	public void focusOn() {

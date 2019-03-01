@@ -12,14 +12,10 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Enumeration;
 
 import javax.swing.Box;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
 import mpfk.controls.Overlay;
@@ -59,7 +55,7 @@ public class createGUI {
 
 	public createGUI() {
 		frame = new JFrame("vlcMoviePlayer");
-
+		
 		new LoadSettings();
 		createMenuBar();
 		createContentPanel();
@@ -106,7 +102,6 @@ public class createGUI {
 
 	private void createMenuBar() {
 		setLookAndFeel();
-//		setCustomLookAndFeel();
 		
 		menuBar = new ColoredMenuBar();
 		menuBar.setColor(MENUBARCOLORACTIVE);
@@ -126,33 +121,6 @@ public class createGUI {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	}
-	
-	public static void list() {
-        UIDefaults defaults = UIManager.getDefaults();
-        System.out.println(defaults.size()+ " properties defined !");
-        String[ ] colName = {"Key", "Value"};
-        String[ ][ ] rowData = new String[ defaults.size() ][ 2 ];
-        int i = 0;
-        for(Enumeration e = defaults.keys(); e.hasMoreElements(); i++){
-            Object key = e.nextElement();
-            rowData[ i ] [ 0 ] = key.toString();
-            rowData[ i ] [ 1 ] = ""+defaults.get(key);
-            System.out.println(rowData[i][0]+" ,, "+rowData[i][1]);
-        }
-        JFrame f = new JFrame("UIManager properties default values");
-        JTable t = new JTable(rowData, colName);
-        f.setContentPane(new JScrollPane(t));
-        //f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.pack();
-        f.setVisible(true);
-    }
-	
-	private void setCustomLookAndFeel() {
-		list();
-
-		UIManager.put("Menu.selectionBackground", new Color(0, 0, 200, 20));		
-		
 	}
 
 	private void createContentPanel() {
@@ -233,7 +201,6 @@ public class createGUI {
 
 	private void setVLC() {
 		emp.setUp(frame, movieCanvas);
-//		emp.setUp(frame, movieCanvas);
 		emp.setEventListener();
 
 		if (searchPanel.getIconList().size() > 0) {

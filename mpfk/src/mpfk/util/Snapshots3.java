@@ -22,54 +22,56 @@ public class Snapshots3 {
 	    public Snapshots3(List<File> listOfMine) throws Exception {
 	    	
 	    	for (int i = 0; i < listOfMine.size(); i++) {
-	    		String fileString = listOfMine.get(i).getAbsolutePath().toString();
-		        String mrl = fileString;
-		        fileString = fileString.replaceAll("\\\\", "_").replaceAll(":", "");
-		        
-		        int imageWidth = Integer.parseInt("150");
-		        File snapshotFile = new File(System.getProperty("user.dir") + "\\covers\\(" + fileString + ").png");
-		        if (!snapshotFile.exists()) {
-			        snapshotFile.getParentFile().mkdirs();
-			
-			        MediaPlayerFactory factory = new MediaPlayerFactory(VLC_ARGS);
-			        MediaPlayer mediaPlayer = factory.newEmbeddedMediaPlayer();
-			
-			        final CountDownLatch inPositionLatch = new CountDownLatch(1);
-			        final CountDownLatch snapshotTakenLatch = new CountDownLatch(1);
-			
-			        mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
-			
-			            @Override
-			            public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {
-			                if(newPosition >= VLC_THUMBNAIL_POSITION * 0.9f) { /* 90% margin */
-			                    inPositionLatch.countDown();
-			                }
-			            }
-			
-			            @Override
-			            public void snapshotTaken(MediaPlayer mediaPlayer, String filename) {
-			                System.out.println("snapshotTaken(filename=" + filename + ")");
-			                snapshotTakenLatch.countDown();
-			            }
-			            
-			        });
-			
-			        if (mediaPlayer.startMedia(mrl)) {
-			            mediaPlayer.setPosition(VLC_THUMBNAIL_POSITION);
-			            inPositionLatch.await(); // Might wait forever if error
-			
-			            mediaPlayer.saveSnapshot(snapshotFile, imageWidth, 0);
-			            snapshotTakenLatch.await(); // Might wait forever if error
-			            
-			            createGUI.searchPanel.setIconList(i,snapshotFile);
-			
-			            mediaPlayer.pause();
-			            mediaPlayer.stop();
+	    		if (createGUI.searchPanel.iconCreatorThreadIsRunning()) {
+		    		String fileString = listOfMine.get(i).getAbsolutePath().toString();
+			        String mrl = fileString;
+			        fileString = fileString.replaceAll("\\\\", "_").replaceAll(":", "");
+			        
+			        int imageWidth = Integer.parseInt("150");
+			        File snapshotFile = new File(System.getProperty("user.dir") + "\\covers\\(" + fileString + ").png");
+			        if (!snapshotFile.exists()) {
+				        snapshotFile.getParentFile().mkdirs();
+				
+				        MediaPlayerFactory factory = new MediaPlayerFactory(VLC_ARGS);
+				        MediaPlayer mediaPlayer = factory.newEmbeddedMediaPlayer();
+				
+				        final CountDownLatch inPositionLatch = new CountDownLatch(1);
+				        final CountDownLatch snapshotTakenLatch = new CountDownLatch(1);
+				
+				        mediaPlayer.addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+				
+				            @Override
+				            public void positionChanged(MediaPlayer mediaPlayer, float newPosition) {
+				                if(newPosition >= VLC_THUMBNAIL_POSITION * 0.9f) { /* 90% margin */
+				                    inPositionLatch.countDown();
+				                }
+				            }
+				
+				            @Override
+				            public void snapshotTaken(MediaPlayer mediaPlayer, String filename) {
+				                System.out.println("snapshotTaken(filename=" + filename + ")");
+				                snapshotTakenLatch.countDown();
+				            }
+				            
+				        });
+				
+				        if (mediaPlayer.startMedia(mrl)) {
+				            mediaPlayer.setPosition(VLC_THUMBNAIL_POSITION);
+				            inPositionLatch.await(); // Might wait forever if error
+				
+				            mediaPlayer.saveSnapshot(snapshotFile, imageWidth, 0);
+				            snapshotTakenLatch.await(); // Might wait forever if error
+				            
+				            createGUI.searchPanel.setIconList(i,snapshotFile);
+				
+				            mediaPlayer.pause();
+				            mediaPlayer.stop();
+				        }
+				
+				        mediaPlayer.release();
+				        factory.release();
 			        }
-			
-			        mediaPlayer.release();
-			        factory.release();
-		        }
+	    		}
 	        }
 	    }
 	}

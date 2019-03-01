@@ -132,5 +132,9 @@ public class VlcjLoader3 {
 			setVolume(volume - 10);
 		}
 	}
+
+	public void release() {
+		embeddedMediaPlayer.release();
+	}
 	
 }

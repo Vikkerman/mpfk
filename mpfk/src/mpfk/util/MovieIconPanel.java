@@ -81,7 +81,7 @@ public class MovieIconPanel extends JPanel {
 		createGUI.playFile(); // rename or reprogramming later
 	}
 	
-	private void stopIconCreatorThread() {
+	public void stopIconCreatorThread() {
 		if (iconCreatorThread.isAlive()) {
 			iconCreatorThread.stopThread();
 		}
@@ -142,11 +142,10 @@ public class MovieIconPanel extends JPanel {
 	private void setMovieList() {
 		movieIcons.clear();
 		labels.clear();
+		
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
 		File dir = new File(System.getProperty("user.dir") + FILESEPARATOR + "covers" + FILESEPARATOR);
 		dir.mkdirs();
-
 		File[] files = dir.listFiles((d, name) -> name.endsWith(".png"));
 
 		imageArray = new ImageIcon[files.length];
@@ -198,30 +197,16 @@ public class MovieIconPanel extends JPanel {
 				}
 			}
 		};
-
 		iconCreatorThread.start();
 
 		Dimension currMaxSize = getPanelMaximumSize();
 		setPanelPreferredSize(new Dimension(170, currMaxSize.height));
 	}
 	
-	protected void revalidatePanel() {
-		this.revalidate();
-	}
-
-	protected void setPanelPreferredSize(Dimension dim) {
-		this.setPreferredSize(dim);
-	}
-
-	private Dimension getPanelMaximumSize() {
-		return this.getMaximumSize();
-	}
-	
 	private void createMovieIcons(int i) {
 		String iconString = movieList.get(i).getName().toString();
 		movieIcons.add(new MovieIcon(iconString, i, ifThereIsAnImage(movieList.get(i).getAbsolutePath().toString())));
 		FocusableLabel label = new FocusableLabel(iconString);
-		label.setForeground(Color.white);
 		labels.add(label);
 		movieIcons.get(i).addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -274,6 +259,18 @@ public class MovieIconPanel extends JPanel {
 		labels.get(previousMovie).focusOff();
 		labels.get(currentMovie).focusOn();
 		revalidate();
+	}
+	
+	protected void revalidatePanel() {
+		this.revalidate();
+	}
+
+	protected void setPanelPreferredSize(Dimension dim) {
+		this.setPreferredSize(dim);
+	}
+
+	private Dimension getPanelMaximumSize() {
+		return this.getMaximumSize();
 	}
 		
 	private JPanel getPanel() {
@@ -346,6 +343,10 @@ public class MovieIconPanel extends JPanel {
 
 	public void addToMovieDirfileDir(String dir) {
 		movieDir.add(dir);
+	}
+
+	public boolean iconCreatorThreadIsRunning() {
+		return iconCreatorThread.shouldRun;
 	}
 
 }

@@ -84,7 +84,19 @@ public class ColoredMenuBar extends JMenuBar {
 		exitMi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.ALT_MASK));
 		exitMi.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
+				createGUI.emp.stop();
+				createGUI.emp.release();
+				createGUI.searchPanel.stopIconCreatorThread();
+				new Thread() {
+					public void run() {
+						try {
+							Thread.sleep(2000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						System.exit(0);
+					}
+				}.start();
 			}
 		});
 		exitMenu.add(exitMi);
@@ -180,7 +192,19 @@ public class ColoredMenuBar extends JMenuBar {
 						createGUI.menuBar.setColor(MENUBARCOLORACTIVE);
 						parent.dispose();
 					} else {
-						System.exit(0);
+						createGUI.emp.stop();
+						createGUI.emp.release();
+						createGUI.searchPanel.stopIconCreatorThread();
+						new Thread() {
+							public void run() {
+								try {
+									Thread.sleep(2000);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+								System.exit(0);
+							}
+						}.start();
 					}
 				}
 			}

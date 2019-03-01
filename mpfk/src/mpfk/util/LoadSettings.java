@@ -21,7 +21,6 @@ import org.apache.commons.io.IOUtils;
  */
 public class LoadSettings {
 	private final static String SETTINGSFILEPATH = "./settings/settings.txt";
-	private final String FILESEPARATOR = File.separator;
 	private static String lines[];
 
 	public LoadSettings() {
@@ -38,11 +37,10 @@ public class LoadSettings {
 
 			fis.close();
 		} catch (FileNotFoundException e) {
-			File yourFile = new File(
-					System.getProperty("user.dir") + SETTINGSFILEPATH.substring(1, SETTINGSFILEPATH.length()));
+			File settingsFile = new File(System.getProperty("user.dir") + SETTINGSFILEPATH.substring(1, SETTINGSFILEPATH.length()));
 			try {
-				yourFile.getParentFile().mkdirs();
-				yourFile.createNewFile();
+				settingsFile.getParentFile().mkdirs();
+				settingsFile.createNewFile();
 
 				BufferedWriter outputWriter = new BufferedWriter(
 						new OutputStreamWriter(new FileOutputStream(SETTINGSFILEPATH), StandardCharsets.UTF_8));
@@ -55,18 +53,6 @@ public class LoadSettings {
 				settingsArray.add(System.getProperty("user.dir") + "");
 				settingsArray.add("");
 				settingsArray.add("endOfSettings");
-
-				File theDir = new File(System.getProperty("user.dir") + "\\temp");
-
-				// if the directory does not exist, create it
-				if (!theDir.exists()) {
-					try {
-						theDir.mkdir();
-					} catch (SecurityException se) {
-						// handle it
-						se.printStackTrace();
-					}
-				}
 
 				for (String sA : settingsArray) {
 					outputWriter.write(sA);
